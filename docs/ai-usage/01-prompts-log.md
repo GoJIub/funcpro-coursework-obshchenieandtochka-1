@@ -51,4 +51,4 @@
 - docs/syntax.md
 - examples/*.x (пустые заглушки)
 
-**Связанный PR:** pending
+**Связанный PR:** #2
