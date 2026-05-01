@@ -30,12 +30,15 @@
 
 ## Формат лога
 
-Каждый факт использования фиксируется в `docs/ai-usage/01-prompts-log.md`
+Каждый участник ведёт свой файл:
+- docs/ai-usage/01-log-participant-1.md
+- docs/ai-usage/01-log-participant-2.md
+- docs/ai-usage/01-log-participant-3.md
+
 по следующему шаблону:
 
 ---
 - Дата:
-- Участник:
 - Задача:
 - Prompt:
 - Ответ ИИ / краткое содержание:
