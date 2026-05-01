@@ -1,0 +1,9 @@
+bin/
+obj/
+.ionide/
+.fake/
+.idea/
+.vscode/
+TestResults/
+*.user
+*.suo
