@@ -46,3 +46,54 @@
 **Связанный PR:** pending
 
 ---
+
+**Дата:** 02.05.2026
+**Задача:** Issue #3 — создание F# project skeleton
+
+**Prompt / темы обращений:**
+Сессия с Codex по этапу 1:
+1. Разделить работу этапа 0 и этапа 1 на отдельные ветки и PR.
+2. Подготовить ветку `core/project-skeleton` поверх актуального `main`.
+3. Создать F# solution, проекты `Language`, `Cli`, `Language.Tests`.
+4. Добавить файлы `Ast.fs`, `Values.fs`, `Environment.fs`, `EvalError.fs`,
+   `Parser.fs`, `Evaluator.fs`.
+5. Добавить smoke tests и GitHub Actions workflow.
+6. Проверить локальную сборку и разобрать падение CI.
+7. Исправить smoke test, который сравнивал `Result<Value, EvalError>` через
+   `Assert.Equal`.
+
+**Ответ ИИ / краткое содержание:**
+- Создана и обновлена ветка `core/project-skeleton`.
+- Этап 1 отделён от документационной ветки `docs/language-contract`.
+- Добавлены solution, проекты, CI и минимальные файлы языкового ядра.
+- Parser и evaluator оставлены заглушками, чтобы не заходить в задачи
+  следующих этапов.
+- После падения CI предложено заменить `Assert.Equal` на pattern matching,
+  потому что `Value` содержит вариант `VBuiltin` с функцией.
+
+**Что принято:**
+- Этап 1 оформляется одним PR, потому что все пункты образуют единый bootstrap.
+- Issue #3 остаётся составной задачей `core: create project skeleton`.
+- Smoke test для `Environment.lookup` проверяет результат через pattern
+  matching.
+- CI запускает `dotnet restore`, `dotnet build` и `dotnet test`.
+
+**Что изменено человеком:**
+- Команда согласовала, что не нужно создавать отдельные Issue на каждый пункт
+  этапа 1.
+- PR #6 создан вручную через GitHub UI.
+- После падения CI проверен лог GitHub Actions и внесено точечное исправление
+  теста.
+
+**Связанные файлы:**
+- `FuncProCoursework.sln`
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `src/Language/*`
+- `src/Cli/*`
+- `tests/Language.Tests/*`
+- `docs/ai-usage/01-log-participant-1.md`
+
+**Связанный PR:** #6
+
+---
