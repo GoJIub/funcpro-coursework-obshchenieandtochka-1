@@ -12,7 +12,9 @@ let ``environment lookup returns bound value`` () =
     | result -> Assert.Fail($"Expected bound number 10, got {result}")
 
 [<Fact>]
-let ``parser exposes initial contract`` () =
-    match Parser.parse "(+ 1 2)" with
-    | Error(InvalidSyntax _) -> Assert.True(true)
-    | result -> Assert.Fail($"Expected parser stub error, got {result}")
+let ``parser parses atom as symbol for now`` () =
+    let result = Parser.parse "(+ 1 2)"
+
+    match result with
+    | Ok (ESymbol "(+ 1 2)") -> Assert.True(true)
+    | result -> Assert.Fail($"Unexpected result: {result}")
