@@ -54,7 +54,7 @@
 
 ---
 
-**Дата:** 01.05.2026
+**Дата:** 02.05.2026
 **Задача:** Реализация Builtins.fs и покрытие тестами
 
 **Prompt / темы обращений:**
@@ -87,4 +87,4 @@
 - src/Language/Builtins.fs
 - tests/Language.Tests/BuiltinTests.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #15
