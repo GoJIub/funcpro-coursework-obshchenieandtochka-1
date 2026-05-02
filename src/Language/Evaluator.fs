@@ -1,16 +1,6 @@
 namespace Language
 
 module Evaluator =
-    let private valueTypeName value =
-        match value with
-        | VNumber _ -> "Number"
-        | VBool _ -> "Bool"
-        | VList _ -> "List"
-        | VClosure _ -> "Closure"
-        | VBuiltin _ -> "Builtin"
-        | VMaybe _ -> "Maybe"
-        | VThunk _ -> "Thunk"
-
     let rec private evalArguments env arguments =
         match arguments with
         | [] -> Ok []
@@ -31,7 +21,7 @@ module Evaluator =
                 let callEnv = Environment.extendMany (List.zip parameters arguments) closureEnv
                 eval callEnv body
         | VBuiltin(_, implementation) -> implementation arguments
-        | other -> Error(NotAFunction(valueTypeName other))
+        | other -> Error(NotAFunction(ValueFormatting.valueTypeName other))
 
     and eval (env: Env) (expr: Expr) : Result<Value, EvalError> =
         match expr with
@@ -42,7 +32,7 @@ module Evaluator =
             match eval env condition with
             | Ok(VBool true) -> eval env thenBranch
             | Ok(VBool false) -> eval env elseBranch
-            | Ok actual -> Error(TypeMismatch("Bool", valueTypeName actual))
+            | Ok actual -> Error(TypeMismatch("Bool", ValueFormatting.valueTypeName actual))
             | Error error -> Error error
         | ELet(name, valueExpr, body) ->
             match eval env valueExpr with

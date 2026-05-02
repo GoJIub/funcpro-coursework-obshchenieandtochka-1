@@ -5,17 +5,7 @@ module Builtins =
     let private expectNumber (value: Value) : Result<int, EvalError> =
         match value with
         | VNumber n -> Ok n
-        | other ->
-            let typeName =
-                match other with
-                | VBool _ -> "Bool"
-                | VList _ -> "List"
-                | VClosure _ -> "Closure"
-                | VBuiltin _ -> "Builtin"
-                | VMaybe _ -> "Maybe"
-                | VThunk _ -> "Thunk"
-                | VNumber _ -> "Number"
-            Error(TypeMismatch("Number", typeName))
+        | other -> Error(TypeMismatch("Number", ValueFormatting.valueTypeName other))
 
     let private arithmeticOp
         (op: int -> int -> int)
@@ -69,7 +59,7 @@ module Builtins =
                 else
                     let callEnv = Environment.extendMany (List.zip parameters args) closureEnv
                     eval callEnv body
-            | other -> Error(NotAFunction(sprintf "%A" other))
+            | other -> Error(NotAFunction(ValueFormatting.valueTypeName other))
 
         [ "+", VBuiltin("+", arithmeticOp (+))
           "-", VBuiltin("-", arithmeticOp (-))
