@@ -168,3 +168,95 @@ let ``evaluator nested closure captures call environment`` () =
     match Evaluator.eval Environment.empty expr with
     | Ok(VNumber 7) -> Assert.True(true)
     | result -> Assert.Fail($"Expected nested closure captured x = 7, got {result}")
+
+[<Fact>]
+let ``evaluator letrec binds function to its own name`` () =
+    let expr =
+        ELetRec(
+            "self",
+            ELambda([ "x" ], ESymbol "self"),
+            EApply(ESymbol "self", [ ENumber 1 ])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VClosure([ "x" ], ESymbol "self", closureEnv)) ->
+        match Environment.lookup "self" closureEnv with
+        | Ok(VClosure _) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected recursive self binding, got {result}")
+    | _ -> Assert.Fail("Expected recursive closure")
+
+[<Fact>]
+let ``evaluator evaluates recursive factorial through letrec`` () =
+    let env = Builtins.makeBuiltins Evaluator.eval
+
+    let expr =
+        ELetRec(
+            "factorial",
+            ELambda(
+                [ "n" ],
+                EIf(
+                    EApply(ESymbol "=", [ ESymbol "n"; ENumber 0 ]),
+                    ENumber 1,
+                    EApply(
+                        ESymbol "*",
+                        [ ESymbol "n"
+                          EApply(
+                              ESymbol "factorial",
+                              [ EApply(ESymbol "-", [ ESymbol "n"; ENumber 1 ]) ]
+                          ) ]
+                    )
+                )
+            ),
+            EApply(ESymbol "factorial", [ ENumber 5 ])
+        )
+
+    match Evaluator.eval env expr with
+    | Ok(VNumber 120) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected factorial 5 = 120, got {result}")
+
+[<Fact>]
+let ``evaluator rejects non-lambda letrec value`` () =
+    let expr = ELetRec("x", ENumber 1, ESymbol "x")
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(OtherEvalError _) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected letrec error, got {result}")
+
+[<Fact>]
+let ``evaluator rejects letrec function call with too many arguments`` () =
+    let expr =
+        ELetRec(
+            "f",
+            ELambda([ "x" ], ESymbol "x"),
+            EApply(ESymbol "f", [ ENumber 1; ENumber 2 ])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(WrongArgumentCount(1, 2)) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected letrec wrong argument count, got {result}")
+
+[<Fact>]
+let ``evaluator rejects letrec function call with too few arguments`` () =
+    let expr =
+        ELetRec(
+            "f",
+            ELambda([ "x" ], ESymbol "x"),
+            EApply(ESymbol "f", [])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(WrongArgumentCount(1, 0)) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected letrec wrong argument count, got {result}")
+
+[<Fact>]
+let ``evaluator propagates recursive function argument count error`` () =
+    let expr =
+        ELetRec(
+            "f",
+            ELambda([ "x" ], EApply(ESymbol "f", [ ESymbol "x"; ENumber 1 ])),
+            EApply(ESymbol "f", [ ENumber 0 ])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(WrongArgumentCount(1, 2)) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected recursive wrong argument count, got {result}")

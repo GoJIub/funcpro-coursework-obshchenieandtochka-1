@@ -38,7 +38,14 @@ module Evaluator =
             match eval env valueExpr with
             | Ok value -> eval (Environment.extend name value env) body
             | Error error -> Error error
-        | ELetRec _ -> Error(OtherEvalError "letrec evaluation is not implemented yet.")
+        | ELetRec(name, valueExpr, body) ->
+            match valueExpr with
+            | ELambda(parameters, lambdaBody) ->
+                let rec recursiveValue = VClosure(parameters, lambdaBody, recursiveEnv)
+                and recursiveEnv = Map.add name recursiveValue env
+
+                eval recursiveEnv body
+            | _ -> Error(OtherEvalError "letrec requires lambda value expression.")
         | ELambda(parameters, body) -> Ok(VClosure(parameters, body, env))
         | EApply(calleeExpr, argumentExprs) ->
             match eval env calleeExpr with

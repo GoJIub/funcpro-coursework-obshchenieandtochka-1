@@ -48,6 +48,46 @@
 ---
 
 **Дата:** 03.05.2026
+**Задача:** Issue #11 — `letrec` и рекурсия
+
+**Prompt / темы обращений:**
+Сессия с Codex по последней задаче этапа Core Interpreter:
+1. Переключиться на `main` и подтянуть свежие merge после approval refactor PR.
+2. Создать ветку `core/eval-letrec-recursion`.
+3. Реализовать `eval ELetRec` для рекурсивных функций без изменения контрактов
+   `Expr`, `Value`, `Env`, `EvalError` и сигнатуры `eval`.
+4. Добавить evaluator tests для доступа функции к собственному имени,
+   рекурсивного factorial через AST, ошибки некорректного `letrec` и ошибки
+   неверного применения рекурсивной функции.
+5. Обновить спецификацию языка по семантике `letrec`.
+
+**Ответ ИИ / краткое содержание:**
+- `ELetRec` реализован для случая, когда `valueExpr` является `ELambda`.
+- Для рекурсивной функции создаётся `VClosure`, окружение которого содержит
+  связывание имени функции с самим этим замыканием.
+- Некорректный `letrec` с не-lambda значением возвращает `OtherEvalError`.
+- Добавлены тесты на self-binding, factorial, non-lambda `letrec` и
+  `WrongArgumentCount` внутри рекурсивного вызова.
+
+**Что принято:**
+- Issue #11 не меняет runtime-контракты и не вводит mutable environment.
+- Parser, примеры `.x`, списки и новые builtins не входят в scope.
+- Factorial проверяется через прямой AST и уже существующие arithmetic builtins.
+
+**Что изменено человеком:**
+- Issue #11 выбран после approval refactor PR.
+
+**Связанные файлы:**
+- `src/Language/Evaluator.fs`
+- `tests/Language.Tests/EvaluatorTests.fs`
+- `docs/language-spec.md`
+- `docs/ai-usage/01-log-participant-1.md`
+
+**Связанный PR:** pending
+
+---
+
+**Дата:** 03.05.2026
 **Задача:** Refactor — общий helper для имени runtime-типа `Value`
 
 **Prompt / темы обращений:**
