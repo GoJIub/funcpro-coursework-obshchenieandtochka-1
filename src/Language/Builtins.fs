@@ -58,7 +58,19 @@ module Builtins =
         | [ _; _ ] -> Error(TypeMismatch("matching types", "mismatched types"))
         | _ -> Error(WrongArgumentCount(2, List.length args))
 
-    let builtins : Map<string, Value> =
+    let makeBuiltins (eval: Env -> Expr -> Result<Value, EvalError>) : Map<string, Value> =
+
+        let applyFunc (f: Value) (args: Value list) : Result<Value, EvalError> =
+            match f with
+            | VBuiltin(_, impl) -> impl args
+            | VClosure(parameters, body, closureEnv) ->
+                if List.length parameters <> List.length args then
+                    Error(WrongArgumentCount(List.length parameters, List.length args))
+                else
+                    let callEnv = Environment.extendMany (List.zip parameters args) closureEnv
+                    eval callEnv body
+            | other -> Error(NotAFunction(sprintf "%A" other))
+
         [ "+", VBuiltin("+", arithmeticOp (+))
           "-", VBuiltin("-", arithmeticOp (-))
           "*", VBuiltin("*", arithmeticOp (*))
