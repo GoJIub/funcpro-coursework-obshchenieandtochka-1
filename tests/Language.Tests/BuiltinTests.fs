@@ -3,9 +3,11 @@ module Language.Tests.BuiltinTests
 open Language
 open Xunit
 
+let private builtins = Builtins.makeBuiltins Evaluator.eval
+
 [<Fact>]
 let ``builtin add returns sum`` () =
-    let add = Builtins.builtins |> Map.find "+"
+    let add = builtins |> Map.find "+"
     match add with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4 ] with
@@ -15,7 +17,7 @@ let ``builtin add returns sum`` () =
 
 [<Fact>]
 let ``builtin add rejects first non-number`` () =
-    let add = Builtins.builtins |> Map.find "+"
+    let add = builtins |> Map.find "+"
     match add with
     | VBuiltin(_, impl) ->
         match impl [ VBool true; VNumber 1 ] with
@@ -25,7 +27,7 @@ let ``builtin add rejects first non-number`` () =
 
 [<Fact>]
 let ``builtin add rejects second non-number`` () =
-    let add = Builtins.builtins |> Map.find "+"
+    let add = builtins |> Map.find "+"
     match add with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 1; VBool true ] with
@@ -35,7 +37,7 @@ let ``builtin add rejects second non-number`` () =
 
 [<Fact>]
 let ``builtin add rejects single arg`` () =
-    let add = Builtins.builtins |> Map.find "+"
+    let add = builtins |> Map.find "+"
     match add with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 1 ] with
@@ -45,7 +47,7 @@ let ``builtin add rejects single arg`` () =
 
 [<Fact>]
 let ``builtin add rejects more than 2 args`` () =
-    let add = Builtins.builtins |> Map.find "+"
+    let add = builtins |> Map.find "+"
     match add with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4; VNumber 5 ] with
@@ -55,7 +57,7 @@ let ``builtin add rejects more than 2 args`` () =
 
 [<Fact>]
 let ``builtin sub returns differnece`` () =
-    let sub = Builtins.builtins |> Map.find "-"
+    let sub = builtins |> Map.find "-"
     match sub with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4 ] with
@@ -65,7 +67,7 @@ let ``builtin sub returns differnece`` () =
 
 [<Fact>]
 let ``builtin mult returns composition`` () =
-    let mult = Builtins.builtins |> Map.find "*"
+    let mult = builtins |> Map.find "*"
     match mult with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4 ] with
@@ -75,7 +77,7 @@ let ``builtin mult returns composition`` () =
 
 [<Fact>]
 let ``builtin div returns ratio`` () =
-    let div = Builtins.builtins |> Map.find "/"
+    let div = builtins |> Map.find "/"
     match div with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 10; VNumber 5 ] with
@@ -85,7 +87,7 @@ let ``builtin div returns ratio`` () =
 
 [<Fact>]
 let ``builtin div raises DivisionByZero`` () =
-    let div = Builtins.builtins |> Map.find "/"
+    let div = builtins |> Map.find "/"
     match div with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 10; VNumber 0 ] with
@@ -95,7 +97,7 @@ let ``builtin div raises DivisionByZero`` () =
 
 [<Fact>]
 let ``builtin eq returns true to numbers`` () =
-    let eq = Builtins.builtins |> Map.find "="
+    let eq = builtins |> Map.find "="
     match eq with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 3 ] with
@@ -105,7 +107,7 @@ let ``builtin eq returns true to numbers`` () =
 
 [<Fact>]
 let ``builtin eq returns false to numbers`` () =
-    let eq = Builtins.builtins |> Map.find "="
+    let eq = builtins |> Map.find "="
     match eq with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4 ] with
@@ -115,7 +117,7 @@ let ``builtin eq returns false to numbers`` () =
 
 [<Fact>]
 let ``builtin eq returns true to bool`` () =
-    let eq = Builtins.builtins |> Map.find "="
+    let eq = builtins |> Map.find "="
     match eq with
     | VBuiltin(_, impl) ->
         match impl [ VBool true; VBool true ] with
@@ -125,7 +127,7 @@ let ``builtin eq returns true to bool`` () =
 
 [<Fact>]
 let ``builtin eq returns false to bool`` () =
-    let eq = Builtins.builtins |> Map.find "="
+    let eq = builtins |> Map.find "="
     match eq with
     | VBuiltin(_, impl) ->
         match impl [ VBool true; VBool false ] with
@@ -135,7 +137,7 @@ let ``builtin eq returns false to bool`` () =
 
 [<Fact>]
 let ``builtin eq rejects mismatched types`` () =
-    let eq = Builtins.builtins |> Map.find "="
+    let eq = builtins |> Map.find "="
     match eq with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 1; VBool true ] with
@@ -145,7 +147,7 @@ let ``builtin eq rejects mismatched types`` () =
 
 [<Fact>]
 let ``builtin compare more returns true`` () =
-    let compare = Builtins.builtins |> Map.find ">"
+    let compare = builtins |> Map.find ">"
     match compare with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 4; VNumber 3 ] with
@@ -155,7 +157,7 @@ let ``builtin compare more returns true`` () =
 
 [<Fact>]
 let ``builtin compare more returns false`` () =
-    let compare = Builtins.builtins |> Map.find ">"
+    let compare = builtins |> Map.find ">"
     match compare with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4 ] with
@@ -165,7 +167,7 @@ let ``builtin compare more returns false`` () =
 
 [<Fact>]
 let ``builtin compare less returns true`` () =
-    let compare = Builtins.builtins |> Map.find "<"
+    let compare = builtins |> Map.find "<"
     match compare with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 3; VNumber 4 ] with
@@ -175,7 +177,7 @@ let ``builtin compare less returns true`` () =
 
 [<Fact>]
 let ``builtin compare less returns false`` () =
-    let compare = Builtins.builtins |> Map.find "<"
+    let compare = builtins |> Map.find "<"
     match compare with
     | VBuiltin(_, impl) ->
         match impl [ VNumber 4; VNumber 3 ] with
