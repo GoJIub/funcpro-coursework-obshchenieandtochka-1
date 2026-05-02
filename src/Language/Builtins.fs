@@ -61,11 +61,59 @@ module Builtins =
                     eval callEnv body
             | other -> Error(NotAFunction(ValueFormatting.valueTypeName other))
 
-        [ "+", VBuiltin("+", arithmeticOp (+))
-          "-", VBuiltin("-", arithmeticOp (-))
-          "*", VBuiltin("*", arithmeticOp (*))
-          "/", VBuiltin("/", div)
-          "=", VBuiltin("=", eq)
-          "<", VBuiltin("<", compareOp (<))
-          ">", VBuiltin(">", compareOp (>)) ]
+        let expectList (value: Value) : Result<Value list, EvalError> =
+            match value with
+            | VList items -> Ok items
+            | other -> Error(TypeMismatch("List", ValueFormatting.valueTypeName other))
+
+        let makeList (args: Value list) : Result<Value, EvalError> =
+            Ok(VList args)
+
+        let head (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ arg ] ->
+                match expectList arg with
+                | Ok [] -> Error(OtherEvalError "head: empty list")
+                | Ok(first :: _) -> Ok first
+                | Error e -> Error e
+            | _ -> Error(WrongArgumentCount(1, List.length args))
+
+        let tail (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ arg ] ->
+                match expectList arg with
+                | Ok [] -> Error(OtherEvalError "tail: empty list")
+                | Ok(_ :: rest) -> Ok(VList rest)
+                | Error e -> Error e
+            | _ -> Error(WrongArgumentCount(1, List.length args))
+
+        let cons (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ item; list ] ->
+                match expectList list with
+                | Ok items -> Ok(VList(item :: items))
+                | Error e -> Error e
+            | _ -> Error(WrongArgumentCount(2, List.length args))
+
+        let isEmpty (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ arg ] ->
+                match expectList arg with
+                | Ok [] -> Ok(VBool true)
+                | Ok _ -> Ok(VBool false)
+                | Error e -> Error e
+            | _ -> Error(WrongArgumentCount(1, List.length args))
+
+        [ "+",      VBuiltin("+", arithmeticOp (+))
+          "-",      VBuiltin("-", arithmeticOp (-))
+          "*",      VBuiltin("*", arithmeticOp (*))
+          "/",      VBuiltin("/", div)
+          "=",      VBuiltin("=", eq)
+          "<",      VBuiltin("<", compareOp (<))
+          ">",      VBuiltin(">", compareOp (>))
+          "list",   VBuiltin("list", makeList)
+          "head",   VBuiltin("head", head)
+          "tail",   VBuiltin("tail", tail)
+          "cons",   VBuiltin("cons", cons)
+          "empty?", VBuiltin("empty?", isEmpty) ]
         |> Map.ofList
