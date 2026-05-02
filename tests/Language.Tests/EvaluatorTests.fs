@@ -223,6 +223,32 @@ let ``evaluator rejects non-lambda letrec value`` () =
     | result -> Assert.Fail($"Expected letrec error, got {result}")
 
 [<Fact>]
+let ``evaluator rejects letrec function call with too many arguments`` () =
+    let expr =
+        ELetRec(
+            "f",
+            ELambda([ "x" ], ESymbol "x"),
+            EApply(ESymbol "f", [ ENumber 1; ENumber 2 ])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(WrongArgumentCount(1, 2)) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected letrec wrong argument count, got {result}")
+
+[<Fact>]
+let ``evaluator rejects letrec function call with too few arguments`` () =
+    let expr =
+        ELetRec(
+            "f",
+            ELambda([ "x" ], ESymbol "x"),
+            EApply(ESymbol "f", [])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(WrongArgumentCount(1, 0)) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected letrec wrong argument count, got {result}")
+
+[<Fact>]
 let ``evaluator propagates recursive function argument count error`` () =
     let expr =
         ELetRec(
