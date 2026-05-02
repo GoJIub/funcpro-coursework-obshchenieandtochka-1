@@ -121,3 +121,50 @@ let ``evaluator rejects applying non-function`` () =
     match Evaluator.eval Environment.empty expr with
     | Error(NotAFunction "Number") -> Assert.True(true)
     | result -> Assert.Fail($"Expected NotAFunction, got {result}")
+
+[<Fact>]
+let ``evaluator closure parameter shadows captured variable`` () =
+    let expr =
+        ELet(
+            "x",
+            ENumber 10,
+            EApply(ELambda([ "x" ], ESymbol "x"), [ ENumber 20 ])
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 20) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected parameter x = 20, got {result}")
+
+[<Fact>]
+let ``evaluator closure local let shadows captured variable`` () =
+    let expr =
+        ELet(
+            "x",
+            ENumber 10,
+            ELet(
+                "f",
+                ELambda([ "ignored" ], ELet("x", ENumber 30, ESymbol "x")),
+                ELet("x", ENumber 20, EApply(ESymbol "f", [ ENumber 0 ]))
+            )
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 30) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected local let x = 30, got {result}")
+
+[<Fact>]
+let ``evaluator nested closure captures call environment`` () =
+    let expr =
+        ELet(
+            "make",
+            ELambda([ "x" ], ELambda([ "ignored" ], ESymbol "x")),
+            ELet(
+                "f",
+                EApply(ESymbol "make", [ ENumber 7 ]),
+                ELet("x", ENumber 9, EApply(ESymbol "f", [ ENumber 0 ]))
+            )
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 7) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected nested closure captured x = 7, got {result}")
