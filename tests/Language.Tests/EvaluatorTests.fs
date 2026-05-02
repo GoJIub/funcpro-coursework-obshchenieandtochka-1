@@ -60,3 +60,64 @@ let ``evaluator propagates let value error`` () =
     match Evaluator.eval Environment.empty expr with
     | Error(UnboundVariable "missing") -> Assert.True(true)
     | result -> Assert.Fail($"Expected let value error, got {result}")
+
+[<Fact>]
+let ``evaluator evaluates lambda to closure with lexical environment`` () =
+    let env = Environment.empty |> Environment.extend "x" (VNumber 10)
+    let expr = ELambda([ "y" ], ESymbol "x")
+
+    match Evaluator.eval env expr with
+    | Ok(VClosure([ "y" ], ESymbol "x", closureEnv)) ->
+        match Environment.lookup "x" closureEnv with
+        | Ok(VNumber 10) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected captured x = 10, got {result}")
+    | result -> Assert.Fail($"Expected closure, got {result}")
+
+[<Fact>]
+let ``evaluator applies closure to evaluated argument`` () =
+    let expr = EApply(ELambda([ "x" ], ESymbol "x"), [ ENumber 5 ])
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 5) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected applied argument value, got {result}")
+
+[<Fact>]
+let ``evaluator applies closure with lexical scoping`` () =
+    let expr =
+        ELet(
+            "x",
+            ENumber 10,
+            ELet(
+                "f",
+                ELambda([ "ignored" ], ESymbol "x"),
+                ELet("x", ENumber 20, EApply(ESymbol "f", [ ENumber 0 ]))
+            )
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 10) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected captured x = 10, got {result}")
+
+[<Fact>]
+let ``evaluator evaluates arguments before applying closure`` () =
+    let expr = EApply(ELambda([ "x" ], ENumber 1), [ ESymbol "missing" ])
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(UnboundVariable "missing") -> Assert.True(true)
+    | result -> Assert.Fail($"Expected argument evaluation error, got {result}")
+
+[<Fact>]
+let ``evaluator rejects wrong closure argument count`` () =
+    let expr = EApply(ELambda([ "x"; "y" ], ESymbol "x"), [ ENumber 1 ])
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(WrongArgumentCount(2, 1)) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected wrong argument count, got {result}")
+
+[<Fact>]
+let ``evaluator rejects applying non-function`` () =
+    let expr = EApply(ENumber 1, [])
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(NotAFunction "Number") -> Assert.True(true)
+    | result -> Assert.Fail($"Expected NotAFunction, got {result}")
