@@ -47,6 +47,43 @@
 
 ---
 
+**Дата:** 03.05.2026
+**Задача:** Refactor — общий helper для имени runtime-типа `Value`
+
+**Prompt / темы обращений:**
+Сессия с Codex после review PR #23:
+1. Разобрать договорённость с Участником 3 про `valueTypeName`.
+2. Подтянуть свежий `main` после merge PR с `Builtins.makeBuiltins`.
+3. Вынести `valueTypeName` из `Evaluator.fs` в общий internal helper.
+4. Перевести `Evaluator.fs` и `Builtins.fs` на общий helper.
+5. Проверить сборку и Release-тесты.
+
+**Ответ ИИ / краткое содержание:**
+- Создан модуль `ValueFormatting` с `internal` helper `valueTypeName`.
+- `Evaluator.fs` больше не хранит приватную копию `valueTypeName`.
+- `Builtins.fs` использует тот же helper для `TypeMismatch` и `NotAFunction`.
+- Публичные контракты `Expr`, `Value`, `Env`, `EvalError`, `ParseError`,
+  `parse` и `eval` не менялись.
+
+**Что принято:**
+- Helper остаётся `internal`, чтобы не расширять публичный API языка.
+- Это технический refactor после появления второго места использования.
+- Семантика evaluator и builtins не меняется.
+
+**Что изменено человеком:**
+- Решено сделать отдельный маленький refactor issue/PR после merge PR #23.
+
+**Связанные файлы:**
+- `src/Language/ValueFormatting.fs`
+- `src/Language/Evaluator.fs`
+- `src/Language/Builtins.fs`
+- `src/Language/Language.fsproj`
+- `docs/ai-usage/01-log-participant-1.md`
+
+**Связанный PR:** pending
+
+---
+
 **Дата:** 02.05.2026
 **Задача:** Issue #10 — замыкания и лексическая область видимости
 
