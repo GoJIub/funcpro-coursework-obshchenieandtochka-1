@@ -39,3 +39,11 @@ module ParserTests =
         match result with
         | Error _ -> ()
         | _ -> failwith "Expected error"
+
+    [<Fact>]
+    let ``parse simple application`` () =
+        let result = Parser.parse "(+ 1 2)"
+
+        match result with
+        | Ok (EApply(ESymbol "+", [ENumber 1; ENumber 2])) -> ()
+        | _ -> failwith $"Unexpected result: {result}"

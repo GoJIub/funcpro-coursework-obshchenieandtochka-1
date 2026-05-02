@@ -12,9 +12,9 @@ let ``environment lookup returns bound value`` () =
     | result -> Assert.Fail($"Expected bound number 10, got {result}")
 
 [<Fact>]
-let ``parser parses atom as symbol for now`` () =
+let ``parser parses simple application`` () =
     let result = Parser.parse "(+ 1 2)"
 
     match result with
-    | Ok (ESymbol "(+ 1 2)") -> Assert.True(true)
+    | Ok (EApply(ESymbol "+", [ENumber 1; ENumber 2])) -> Assert.True(true)
     | result -> Assert.Fail($"Unexpected result: {result}")
