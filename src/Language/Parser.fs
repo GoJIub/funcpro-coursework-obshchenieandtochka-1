@@ -1,5 +1,7 @@
 namespace Language
 
+open System
+
 module Parser =
 
     open System

@@ -12,6 +12,7 @@
     <Compile Include="Environment.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Evaluator.fs" />
+    <Compile Include="Builtins.fs" />
   </ItemGroup>
 
 </Project>
