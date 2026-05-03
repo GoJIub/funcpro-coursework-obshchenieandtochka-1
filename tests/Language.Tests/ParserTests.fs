@@ -65,3 +65,27 @@ module ParserTests =
         match Parser.parse "(lambda (x) x)" with
         | Ok (ELambda(["x"], ESymbol "x")) -> ()
         | _ -> failwith "lambda parse failed"
+
+    [<Fact>]
+    let ``parse letrec`` () =
+        match Parser.parse "(letrec f 10 f)" with
+        | Ok (ELetRec("f", ENumber 10, ESymbol "f")) -> ()
+        | _ -> failwith "letrec parse failed"
+
+    [<Fact>]
+    let ``invalid if returns error`` () =
+        match Parser.parse "(if true 1)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid if"
+
+    [<Fact>]
+    let ``invalid let returns error`` () =
+        match Parser.parse "(let x 10)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid let"
+
+    [<Fact>]
+    let ``invalid lambda params returns error`` () =
+        match Parser.parse "(lambda (x 1) x)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid lambda params"
