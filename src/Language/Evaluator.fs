@@ -23,6 +23,16 @@ module Evaluator =
         | VBuiltin(_, implementation) -> implementation arguments
         | other -> Error(NotAFunction(ValueFormatting.valueTypeName other))
 
+    and private forceThunk thunk =
+        match thunk.CachedValue with
+        | Some value -> Ok value
+        | None ->
+            match eval thunk.Environment thunk.Expression with
+            | Ok value ->
+                thunk.CachedValue <- Some value
+                Ok value
+            | Error error -> Error error
+
     and eval (env: Env) (expr: Expr) : Result<Value, EvalError> =
         match expr with
         | ENumber number -> Ok(VNumber number)
@@ -47,6 +57,13 @@ module Evaluator =
                 eval recursiveEnv body
             | _ -> Error(OtherEvalError "letrec requires lambda value expression.")
         | ELambda(parameters, body) -> Ok(VClosure(parameters, body, env))
+        | EDelay delayedExpr ->
+            Ok(VThunk { Expression = delayedExpr; Environment = env; CachedValue = None })
+        | EForce thunkExpr ->
+            match eval env thunkExpr with
+            | Ok(VThunk thunk) -> forceThunk thunk
+            | Ok other -> Error(TypeMismatch("Thunk", ValueFormatting.valueTypeName other))
+            | Error error -> Error error
         | EApply(calleeExpr, argumentExprs) ->
             match eval env calleeExpr with
             | Ok callee ->

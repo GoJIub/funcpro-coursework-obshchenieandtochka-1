@@ -20,6 +20,7 @@
 - `letrec` и рекурсию;
 - списки;
 - встроенные функции;
+- явную ленивость через `delay` и `force`;
 - ошибки выполнения через `Result`.
 
 ## Черновик синтаксиса
@@ -35,6 +36,8 @@ x
 (let name value-expr body)
 (letrec name value-expr body)
 (lambda (arg1 arg2) body)
+(delay expr)
+(force expr)
 (function arg1 arg2)
 (list item1 item2 item3)
 ```
@@ -50,6 +53,8 @@ type Expr =
     | ELet of name: string * valueExpr: Expr * body: Expr
     | ELetRec of name: string * valueExpr: Expr * body: Expr
     | ELambda of parameters: string list * body: Expr
+    | EDelay of Expr
+    | EForce of Expr
     | EApply of callee: Expr * arguments: Expr list
     | EList of Expr list
 ```
@@ -65,6 +70,15 @@ type Value =
     | VBuiltin of name: string * implementation: BuiltinFunc
     | VMaybe of Value option
     | VThunk of Thunk
+```
+
+Контракт thunk:
+
+```fsharp
+type Thunk =
+    { Expression: Expr
+      Environment: Env
+      mutable CachedValue: Value option }
 ```
 
 Контракт окружения:
@@ -109,6 +123,13 @@ val eval : Env -> Expr -> Result<Value, EvalError>
   получает окружение, где его имя уже связано с самим замыканием, поэтому тело
   функции может вызывать саму себя. Некорректный `letrec` с не-lambda значением
   возвращает `OtherEvalError`.
+- `EDelay` не вычисляет вложенное выражение сразу. Вместо этого создаётся
+  `VThunk`, который хранит исходное выражение, окружение создания и пустой cache.
+- `EForce` сначала вычисляет выражение до runtime-значения. Если получен
+  `VThunk`, он вычисляет сохранённое выражение в окружении создания thunk-а,
+  сохраняет результат в `CachedValue` и возвращает его. Повторный `EForce`
+  возвращает cached value без повторного вычисления. Для не-thunk значения
+  возвращается `TypeMismatch("Thunk", actual)`.
 
 ## Контракт ошибок
 

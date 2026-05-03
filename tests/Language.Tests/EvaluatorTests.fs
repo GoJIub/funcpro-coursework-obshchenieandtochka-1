@@ -260,3 +260,76 @@ let ``evaluator propagates recursive function argument count error`` () =
     match Evaluator.eval Environment.empty expr with
     | Error(WrongArgumentCount(1, 2)) -> Assert.True(true)
     | result -> Assert.Fail($"Expected recursive wrong argument count, got {result}")
+
+[<Fact>]
+let ``evaluator delay returns thunk without evaluating expression`` () =
+    match Evaluator.eval Environment.empty (EDelay(ESymbol "missing")) with
+    | Ok(VThunk thunk) ->
+        Assert.Equal(ESymbol "missing", thunk.Expression)
+        Assert.Equal(None, thunk.CachedValue)
+    | result -> Assert.Fail($"Expected thunk, got {result}")
+
+[<Fact>]
+let ``evaluator force evaluates thunk expression`` () =
+    let expr = EForce(EDelay(ENumber 42))
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 42) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected forced value 42, got {result}")
+
+[<Fact>]
+let ``evaluator force uses thunk creation environment`` () =
+    let expr =
+        ELet(
+            "x",
+            ENumber 10,
+            ELet(
+                "delayed",
+                EDelay(ESymbol "x"),
+                ELet("x", ENumber 20, EForce(ESymbol "delayed"))
+            )
+        )
+
+    match Evaluator.eval Environment.empty expr with
+    | Ok(VNumber 10) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected forced captured x = 10, got {result}")
+
+[<Fact>]
+let ``evaluator force stores evaluated value in thunk cache`` () =
+    let thunk =
+        { Expression = ESymbol "x"
+          Environment = Environment.empty |> Environment.extend "x" (VNumber 1)
+          CachedValue = None }
+
+    let env =
+        Environment.empty
+        |> Environment.extend "t" (VThunk thunk)
+
+    match Evaluator.eval env (EForce(ESymbol "t")) with
+    | Ok(VNumber 1) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected first force value 1, got {result}")
+
+    match thunk.CachedValue with
+    | Some(VNumber 1) -> Assert.True(true)
+    | cached -> Assert.Fail($"Expected cached value 1, got {cached}")
+
+[<Fact>]
+let ``evaluator force returns cached value without evaluating expression`` () =
+    let thunk =
+        { Expression = ESymbol "missing"
+          Environment = Environment.empty
+          CachedValue = Some(VNumber 99) }
+
+    let env =
+        Environment.empty
+        |> Environment.extend "t" (VThunk thunk)
+
+    match Evaluator.eval env (EForce(ESymbol "t")) with
+    | Ok(VNumber 99) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected cached force value 99, got {result}")
+
+[<Fact>]
+let ``evaluator force rejects non-thunk value`` () =
+    match Evaluator.eval Environment.empty (EForce(ENumber 1)) with
+    | Error(TypeMismatch("Thunk", "Number")) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected thunk type mismatch, got {result}")

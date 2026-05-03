@@ -4,7 +4,8 @@ type Env = Map<string, Value>
 
 and Thunk =
     { Expression: Expr
-      Environment: Env }
+      Environment: Env
+      mutable CachedValue: Value option }
 
 and BuiltinFunc = Value list -> Result<Value, EvalError>
 

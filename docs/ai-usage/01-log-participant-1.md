@@ -48,6 +48,53 @@
 ---
 
 **Дата:** 03.05.2026
+**Задача:** Issue #32 — core-поддержка `delay` и `force`
+
+**Prompt / темы обращений:**
+Сессия с Codex по core-части явной ленивости:
+1. Разобрать umbrella Issue #30 и sub-issue #32.
+2. Реализовать `EDelay` / `EForce` в AST и evaluator без изменений парсера.
+3. Добавить memoization cache в `VThunk`.
+4. Покрыть evaluator tests через прямое создание AST.
+5. Обновить спецификацию языка и проверить сборку/тесты.
+
+**Ответ ИИ / краткое содержание:**
+- `delay` и `force` оформлены как формы языка, а не обычные builtins.
+- В AST добавлены `EDelay` и `EForce`.
+- `Thunk` теперь хранит исходное выражение, окружение создания и mutable
+  `CachedValue`.
+- `EDelay` создаёт `VThunk` без вычисления выражения.
+- `EForce` вычисляет thunk в окружении создания, мемоизирует результат и
+  возвращает cached value при повторном force.
+- Добавлены evaluator tests для отложенного вычисления, lexical environment,
+  cache и ошибки типа.
+
+**Что принято:**
+- Parser support для `(delay expr)` / `(force expr)` остаётся отдельной задачей
+  Участника 2.
+- Examples и пользовательская документация остаются отдельной задачей
+  Участника 3.
+- Мутация допускается только в `CachedValue`, потому что она нужна для
+  memoization thunk-ов.
+
+**Что изменено человеком:**
+- Команда согласовала разбить lazy evaluation на umbrella Issue и отдельные
+  sub-issues по зонам ответственности.
+- Работа ведётся в отдельной ветке `core/lazy-delay-force`.
+
+**Связанные файлы:**
+- `src/Language/Ast.fs`
+- `src/Language/Values.fs`
+- `src/Language/Evaluator.fs`
+- `tests/Language.Tests/EvaluatorTests.fs`
+- `docs/language-spec.md`
+- `docs/ai-usage/01-log-participant-1.md`
+
+**Связанный PR:** pending
+
+---
+
+**Дата:** 03.05.2026
 **Задача:** Issue #11 — `letrec` и рекурсия
 
 **Prompt / темы обращений:**
