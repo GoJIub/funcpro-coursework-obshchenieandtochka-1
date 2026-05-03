@@ -43,7 +43,7 @@ let main args =
                     match Evaluator.eval env ast with
                     | Ok value ->
                         printfn "Result:"
-                        printfn "%A" value
+                        printfn "%s" (PrettyPrinter.printValue value)
                         0
 
                     | Error err ->
