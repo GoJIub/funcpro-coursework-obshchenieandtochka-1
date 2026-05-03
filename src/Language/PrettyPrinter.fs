@@ -2,27 +2,61 @@ namespace Language
 
 module PrettyPrinter =
 
-    let rec printValue (value: Value) : string =
+    let rec printExpr expr =
+        match expr with
+        | ENumber n -> string n
+        | EBool b -> if b then "true" else "false"
+        | ESymbol s -> s
+        | EIf (c, t, e) ->
+            $"(if {printExpr c} {printExpr t} {printExpr e})"
+        | ELet (name, value, body) ->
+            $"(let {name} {printExpr value} {printExpr body})"
+        | ELetRec (name, value, body) ->
+            $"(letrec {name} {printExpr value} {printExpr body})"
+        | ELambda (args, body) ->
+            let argsStr = String.concat " " args
+            $"(lambda ({argsStr}) {printExpr body})"
+        | EApply (f, args) ->
+            let argsStr =
+                args
+                |> List.map printExpr
+                |> String.concat " "
+            $"({printExpr f} {argsStr})"
+        | EDelay e ->
+            $"(delay {printExpr e})"
+        | EForce e ->
+            $"(force {printExpr e})"
+        | EList items ->
+            let itemsStr =
+                items
+                |> List.map printExpr
+                |> String.concat " "
+            $"(list {itemsStr})"
+
+
+    let rec printValue value =
         match value with
         | VNumber n -> string n
-        | VBool true -> "true"
-        | VBool false -> "false"
+        | VBool b -> if b then "true" else "false"
 
         | VList items ->
-            let inner =
+            let itemsStr =
                 items
                 |> List.map printValue
-                |> String.concat " "
-            $"(list {inner})"
+                |> String.concat "; "
+            $"[{itemsStr}]"
 
-        | VMaybe None -> "nothing"
-
-        | VMaybe (Some v) ->
-            $"(just {printValue v})"
-
-        | VClosure _ -> "<closure>"
+        | VClosure _ ->
+            "<closure>"
 
         | VBuiltin (name, _) ->
             $"<builtin:{name}>"
 
-        | VThunk _ -> "<thunk>"
+        | VMaybe None ->
+            "Nothing"
+
+        | VMaybe (Some v) ->
+            $"Just {printValue v}"
+
+        | VThunk _ ->
+            "<thunk>"
