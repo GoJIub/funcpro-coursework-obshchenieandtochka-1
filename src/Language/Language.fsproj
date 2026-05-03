@@ -12,8 +12,8 @@
     <Compile Include="ValueFormatting.fs" />
     <Compile Include="Environment.fs" />
     <Compile Include="Parser.fs" />
-    <Compile Include="Trace.fs" />  
     <Compile Include="PrettyPrinter.fs" />
+    <Compile Include="Trace.fs" />  
     <Compile Include="Evaluator.fs" />
     <Compile Include="Builtins.fs" />
   </ItemGroup>

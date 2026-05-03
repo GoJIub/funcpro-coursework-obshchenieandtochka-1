@@ -55,7 +55,7 @@ let main args =
 
                 match eval env expr with
                 | Ok value ->
-                    printfn "Result: %A" value
+                    printfn "Result: %s" (PrettyPrinter.printValue value)
                     0
                 | Error err ->
                     printfn "Runtime error: %A" err

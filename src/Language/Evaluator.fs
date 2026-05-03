@@ -42,11 +42,11 @@ module Evaluator =
 
         match result with
         | Ok value ->
-            exitWithResult (printValue value)
+            exitWithResult value
             Ok value
-        | Error _ ->
-            exitWithResult "<error>"
-            result
+        | Error e ->
+            exitWithError (sprintf "%A" e)
+            Error e
 
     and private forceThunk thunk =
         enter "force thunk"
@@ -63,11 +63,11 @@ module Evaluator =
 
         match result with
         | Ok value ->
-            exitWithResult (printValue value)
+            exitWithResult value
             Ok value
-        | Error _ ->
-            exitWithResult "<error>"
-            result
+        | Error e ->
+            exitWithError (sprintf "%A" e)
+            Error e
 
     and eval (env: Env) (expr: Expr) : Result<Value, EvalError> =
         let label = sprintf "eval %s" (printExpr expr)
@@ -144,8 +144,8 @@ module Evaluator =
 
         match result with
         | Ok value ->
-            exitWithResult (printValue value)
+            exitWithResult value
             Ok value
-        | Error _ ->
-            exitWithResult "<error>"
-            result
+        | Error e ->
+            exitWithError (sprintf "%A" e)
+            Error e

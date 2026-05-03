@@ -2,6 +2,8 @@ namespace Language
 
 module Trace =
 
+    open PrettyPrinter
+
     let mutable private indent = 0
     let mutable enabled = false
 
@@ -32,7 +34,15 @@ module Trace =
             printfn "%s→ %s" (prefix ()) colored
             indent <- indent + 1
 
-    let exitWithResult result =
+
+    let exitWithResult (value: Value) =
         if enabled then
             indent <- indent - 1
-            printfn "%s← %s" (prefix ()) (color green ("result " + result))
+            let printed = printValue value
+            printfn "%s← %s" (prefix ()) (color green ("result " + printed))
+
+
+    let exitWithError (message: string) =
+        if enabled then
+            indent <- indent - 1
+            printfn "%s← ERROR: %s" (prefix ()) message
