@@ -43,7 +43,7 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #5
 
 ---
 
@@ -90,7 +90,7 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #36
 
 ---
 
@@ -130,7 +130,7 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #27
 
 ---
 
@@ -167,7 +167,7 @@
 - `src/Language/Language.fsproj`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #26
 
 ---
 
@@ -209,7 +209,7 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #24
 
 ---
 
@@ -250,7 +250,7 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #21
 
 ---
 
@@ -342,6 +342,6 @@
 - `tests/Language.Tests/Tests.fs`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный PR:** pending
+**Связанный PR:** #8
 
 ---
