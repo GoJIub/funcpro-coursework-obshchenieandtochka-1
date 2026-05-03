@@ -47,3 +47,45 @@ module ParserTests =
         match result with
         | Ok (EApply(ESymbol "+", [ENumber 1; ENumber 2])) -> ()
         | _ -> failwith $"Unexpected result: {result}"
+
+    [<Fact>]
+    let ``parse if`` () =
+        match Parser.parse "(if true 1 0)" with
+        | Ok (EIf(EBool true, ENumber 1, ENumber 0)) -> ()
+        | _ -> failwith "if parse failed"
+
+    [<Fact>]
+    let ``parse let`` () =
+        match Parser.parse "(let x 10 x)" with
+        | Ok (ELet("x", ENumber 10, ESymbol "x")) -> ()
+        | _ -> failwith "let parse failed"
+
+    [<Fact>]
+    let ``parse lambda`` () =
+        match Parser.parse "(lambda (x) x)" with
+        | Ok (ELambda(["x"], ESymbol "x")) -> ()
+        | _ -> failwith "lambda parse failed"
+
+    [<Fact>]
+    let ``parse letrec`` () =
+        match Parser.parse "(letrec f 10 f)" with
+        | Ok (ELetRec("f", ENumber 10, ESymbol "f")) -> ()
+        | _ -> failwith "letrec parse failed"
+
+    [<Fact>]
+    let ``invalid if returns error`` () =
+        match Parser.parse "(if true 1)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid if"
+
+    [<Fact>]
+    let ``invalid let returns error`` () =
+        match Parser.parse "(let x 10)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid let"
+
+    [<Fact>]
+    let ``invalid lambda params returns error`` () =
+        match Parser.parse "(lambda (x 1) x)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid lambda params"
