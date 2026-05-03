@@ -125,3 +125,9 @@ module ParserTests =
         match Parser.parse "(x =>)" with
         | Error _ -> ()
         | _ -> failwith "Expected error"
+
+    [<Fact>]
+    let ``invalid let sugar missing body`` () =
+        match Parser.parse "(let x = 10)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error"

@@ -62,10 +62,14 @@ module Parser =
         | List (Atom "if" :: _) ->
             failwith "Invalid if syntax"
 
-        | List [Atom "let"; Atom name; valueExpr; body] ->
-            ELet(name, toExpr valueExpr, toExpr body)
+
+        | List [Atom "let"; Atom _; Atom "="; _] ->
+            failwith "Invalid let syntax"
 
         | List [Atom "let"; Atom name; Atom "="; valueExpr; body] ->
+            ELet(name, toExpr valueExpr, toExpr body)
+
+        | List [Atom "let"; Atom name; valueExpr; body] ->
             ELet(name, toExpr valueExpr, toExpr body)
 
         | List (Atom "let" :: _) ->
