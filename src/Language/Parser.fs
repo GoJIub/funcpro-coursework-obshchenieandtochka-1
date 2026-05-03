@@ -109,6 +109,18 @@ module Parser =
         | List (Atom "lambda" :: _) ->
             failwith "Invalid lambda syntax"
 
+        | List [Atom "delay"; expr] ->
+            EDelay (toExpr expr)
+
+        | List (Atom "delay" :: _) ->
+            failwith "Invalid delay syntax"
+
+        | List [Atom "force"; expr] ->
+            EForce (toExpr expr)
+
+        | List (Atom "force" :: _) ->
+            failwith "Invalid force syntax"
+
         | List (head :: tail) ->
             let callee = toExpr head
             let args = tail |> List.map toExpr
