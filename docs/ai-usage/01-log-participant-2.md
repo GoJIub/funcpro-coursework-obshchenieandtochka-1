@@ -35,7 +35,7 @@
 - tests/Language.Tests/ParserTests.fs
 - tests/Language.Tests/SmokeTests.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #17
 
 ---
 
@@ -69,7 +69,7 @@
 - tests/Language.Tests/ParserTests.fs
 - tests/Language.Tests/SmokeTests.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #19
 
 ---
 
@@ -108,7 +108,7 @@
 - src/Language/Parser.fs
 - tests/Language.Tests/ParserTests.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #33
 
 ---
 
@@ -150,7 +150,7 @@
 - tests/Language.Tests/ParserTests.fs
 - docs/ai-usage/01-log-participant-2.md
 
-**Связанный PR:** pending
+**Связанный PR:** #38
 
 ---
 
@@ -179,7 +179,7 @@
 - tests/Language.Tests/ParserTests.fs
 - docs/ai-usage/01-log-participant-2.md
 
-**Связанный PR:** pending
+**Связанный PR:** #40
 
 ---
 
@@ -220,7 +220,7 @@
 - src/Language/Parser.fs
 - examples/test.x
 
-**Связанный PR:** pending
+**Связанный PR:** #47
 
 ---
 
@@ -253,7 +253,7 @@
 **Связанные файлы:**
 - src/Cli/Program.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #49
 
 ---
 
@@ -304,7 +304,7 @@
 - src/Language/Builtins.fs
 - src/Language/Environment.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #51
 ---
 
 **Дата:** 04.05.2026  
@@ -342,7 +342,7 @@
 - src/Language/PrettyPrinter.fs
 - src/Cli/Program.fs
 
-**Связанный PR:** pending
+**Связанный PR:** #53
 
 ---
 
@@ -386,6 +386,50 @@
 - src/Language/Trace.fs
 - src/Language/PrettyPrinter.fs
 - src/Cli/Program.fs
+- docs/ai-usage/01-log-participant-2.md
+
+**Связанный PR:** #55
+
+---
+
+**Дата:** 04.05.2026
+**Задача:** cli: finalize UX, syntax docs, parser tests
+
+**Prompt / темы обращений:**
+Сессия с ИИ по финальной доводке CLI и документации:
+1. Проверить соответствие проекта Definition of Done для Участника 2.
+2. Заполнить `docs/syntax.md` на основе реального поведения Parser.fs.
+3. Дополнить ParserTests.fs — выявить и закрыть пробелы в покрытии.
+4. Написать лог для текущего issue и описание языка (PL description).
+
+**Ответ ИИ / краткое содержание:**
+- Проведён анализ репозитория: все B1–B8 выполнены, выявлены два пробела —
+  неполный `docs/syntax.md` и незакрытые PR.
+- Сгенерирован полный `docs/syntax.md`:
+  numbers, booleans, variables, if, let (оба синтаксиса), letrec,
+  lambda (оба синтаксиса), application, lists, delay/force,
+  таблица ошибок парсера.
+- Дополнен `ParserTests.fs`: добавлены тесты на отрицательные числа,
+  ноль, символ с дефисом, whitespace-only input, extra tokens, непарные
+  скобки, multi-param lambda, lambda no params, nested if/let/application,
+  immediately applied lambda, delay с выражением, force(delay(99)),
+  сравнение AST classic vs sugar для let и lambda.
+- Все новые тесты прошли `dotnet test`.
+- Написан AI usage log и PL description.
+
+**Что принято:**
+- Полный `docs/syntax.md` с примерами и таблицей ошибок.
+- Расширенные ParserTests.fs — 57 тестов вместо 25.
+- Единый стиль тестов: секции по конструкциям, комментарии-разделители.
+
+**Что изменено человеком:**
+- Проверена сборка и запуск тестов локально (`dotnet test`).
+- Подтверждено соответствие `syntax.md` реальному поведению парсера.
+- Отредактирован и принят лог и описание PL.
+
+**Связанные файлы:**
+- docs/syntax.md
+- tests/Language.Tests/ParserTests.fs
 - docs/ai-usage/01-log-participant-2.md
 
 **Связанный PR:** pending
