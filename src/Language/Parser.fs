@@ -38,6 +38,7 @@ module Parser =
 
     let rec toExpr sexpr =
         match sexpr with
+        // ===== ATOMS =====
         | Atom s ->
             match Int32.TryParse(s) with
             | true, n -> ENumber n
@@ -47,16 +48,32 @@ module Parser =
                 | "false" -> EBool false
                 | _ -> ESymbol s
 
-
+        // ===== IF =====
         | List [Atom "if"; cond; thenExpr; elseExpr] ->
             EIf(toExpr cond, toExpr thenExpr, toExpr elseExpr)
 
+        | List (Atom "if" :: _) ->
+            failwith "Invalid if syntax"
+
+        // ===== LET (старый синтаксис) =====
         | List [Atom "let"; Atom name; valueExpr; body] ->
             ELet(name, toExpr valueExpr, toExpr body)
 
+        // ===== LET (с сахаром: let x = expr body) =====
+        | List [Atom "let"; Atom name; Atom "="; valueExpr; body] ->
+            ELet(name, toExpr valueExpr, toExpr body)
+
+        | List (Atom "let" :: _) ->
+            failwith "Invalid let syntax"
+
+        // ===== LETREC =====
         | List [Atom "letrec"; Atom name; valueExpr; body] ->
             ELetRec(name, toExpr valueExpr, toExpr body)
 
+        | List (Atom "letrec" :: _) ->
+            failwith "Invalid letrec syntax"
+
+        // ===== LAMBDA (старый синтаксис) =====
         | List [Atom "lambda"; List parameters; body] ->
             let paramNames =
                 parameters
@@ -71,20 +88,23 @@ module Parser =
                     | _ -> failwith "Invalid parameter")
             ELambda(paramNames, toExpr body)
 
+        // ===== LAMBDA (сахар: (x => body)) =====
+        | List [Atom param; Atom "=>"; body] ->
+            ELambda([param], toExpr body)
 
-        | List (Atom "if" :: _) ->
-            failwith "Invalid if syntax"
-
-        | List (Atom "let" :: _) ->
-            failwith "Invalid let syntax"
-
-        | List (Atom "letrec" :: _) ->
-            failwith "Invalid letrec syntax"
+        // ===== LAMBDA (сахар: ((x y) => body)) =====
+        | List [List parameters; Atom "=>"; body] ->
+            let paramNames =
+                parameters
+                |> List.map (function
+                    | Atom s -> s
+                    | _ -> failwith "Invalid parameter")
+            ELambda(paramNames, toExpr body)
 
         | List (Atom "lambda" :: _) ->
             failwith "Invalid lambda syntax"
 
-
+        // ===== FUNCTION APPLICATION =====
         | List (head :: tail) ->
             let callee = toExpr head
             let args = tail |> List.map toExpr

@@ -89,3 +89,21 @@ module ParserTests =
         match Parser.parse "(lambda (x 1) x)" with
         | Error _ -> ()
         | _ -> failwith "Expected error for invalid lambda params"
+
+    [<Fact>]
+    let ``parse lambda sugar single param`` () =
+        match Parser.parse "(x => x)" with
+        | Ok (ELambda(["x"], ESymbol "x")) -> ()
+        | _ -> failwith "lambda sugar failed"
+
+    [<Fact>]
+    let ``parse lambda sugar multiple params`` () =
+        match Parser.parse "((x y) => (+ x y))" with
+        | Ok (ELambda(["x"; "y"], EApply(ESymbol "+", [ESymbol "x"; ESymbol "y"]))) -> ()
+        | _ -> failwith "lambda multi param failed"
+
+    [<Fact>]
+    let ``parse let sugar`` () =
+        match Parser.parse "(let x = 10 x)" with
+        | Ok (ELet("x", ENumber 10, ESymbol "x")) -> ()
+        | _ -> failwith "let sugar failed"
