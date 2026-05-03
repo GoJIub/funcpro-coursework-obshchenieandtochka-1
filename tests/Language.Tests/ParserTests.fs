@@ -47,3 +47,21 @@ module ParserTests =
         match result with
         | Ok (EApply(ESymbol "+", [ENumber 1; ENumber 2])) -> ()
         | _ -> failwith $"Unexpected result: {result}"
+
+    [<Fact>]
+    let ``parse if`` () =
+        match Parser.parse "(if true 1 0)" with
+        | Ok (EIf(EBool true, ENumber 1, ENumber 0)) -> ()
+        | _ -> failwith "if parse failed"
+
+    [<Fact>]
+    let ``parse let`` () =
+        match Parser.parse "(let x 10 x)" with
+        | Ok (ELet("x", ENumber 10, ESymbol "x")) -> ()
+        | _ -> failwith "let parse failed"
+
+    [<Fact>]
+    let ``parse lambda`` () =
+        match Parser.parse "(lambda (x) x)" with
+        | Ok (ELambda(["x"], ESymbol "x")) -> ()
+        | _ -> failwith "lambda parse failed"

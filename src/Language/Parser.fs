@@ -1,7 +1,5 @@
 namespace Language
 
-open System
-
 module Parser =
 
     open System
@@ -48,6 +46,25 @@ module Parser =
                 | "true" -> EBool true
                 | "false" -> EBool false
                 | _ -> ESymbol s
+
+
+        | List [Atom "if"; cond; thenExpr; elseExpr] ->
+            EIf(toExpr cond, toExpr thenExpr, toExpr elseExpr)
+
+
+        | List [Atom "let"; Atom name; valueExpr; body] ->
+            ELet(name, toExpr valueExpr, toExpr body)
+
+        | List [Atom "letrec"; Atom name; valueExpr; body] ->
+            ELetRec(name, toExpr valueExpr, toExpr body)
+
+        | List [Atom "lambda"; List parameters; body] ->
+            let paramNames =
+                parameters
+                |> List.map (function
+                    | Atom s -> s
+                    | _ -> failwith "Invalid parameter")
+            ELambda(paramNames, toExpr body)
 
         | List (head :: tail) ->
             let callee = toExpr head
