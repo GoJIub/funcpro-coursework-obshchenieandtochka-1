@@ -8,5 +8,7 @@ type Expr =
     | ELet of name: string * valueExpr: Expr * body: Expr
     | ELetRec of name: string * valueExpr: Expr * body: Expr
     | ELambda of parameters: string list * body: Expr
+    | EDelay of Expr
+    | EForce of Expr
     | EApply of callee: Expr * arguments: Expr list
     | EList of Expr list
