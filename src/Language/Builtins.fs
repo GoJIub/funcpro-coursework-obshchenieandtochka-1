@@ -61,6 +61,8 @@ module Builtins =
                     eval callEnv body
             | other -> Error(NotAFunction(ValueFormatting.valueTypeName other))
 
+        // ─── List ────────────────────────────────────────────────────────────────────
+
         let expectList (value: Value) : Result<Value list, EvalError> =
             match value with
             | VList items -> Ok items
@@ -103,6 +105,8 @@ module Builtins =
                 | Ok _ -> Ok(VBool false)
                 | Error e -> Error e
             | _ -> Error(WrongArgumentCount(1, List.length args))
+
+        // ─── map, filter, fold ───────────────────────────────────────────────────────
 
         let mapList (args: Value list) : Result<Value, EvalError> =
             match args with
@@ -152,6 +156,39 @@ module Builtins =
                 | Error e -> Error e
             | _ -> Error(WrongArgumentCount(3, List.length args))
 
+        // ─── Maybe ───────────────────────────────────────────────────────────────────
+
+        let just (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ value ] -> Ok(VMaybe(Some value))
+            | _ -> Error(WrongArgumentCount(1, List.length args))
+
+        let nothing (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [] -> Ok(VMaybe None)
+            | _ -> Error(WrongArgumentCount(0, List.length args))
+
+        let fmap (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ f; VMaybe None ] -> Ok(VMaybe None)
+            | [ f; VMaybe(Some value) ] ->
+                match applyFunc f [ value ] with
+                | Ok result -> Ok(VMaybe(Some result))
+                | Error e -> Error e
+            | [ _; other ] -> Error(TypeMismatch("Maybe", ValueFormatting.valueTypeName other))
+            | _ -> Error(WrongArgumentCount(2, List.length args))
+
+        let bind (args: Value list) : Result<Value, EvalError> =
+            match args with
+            | [ VMaybe None; _ ] -> Ok(VMaybe None)
+            | [ VMaybe(Some value); f ] ->
+                match applyFunc f [ value ] with
+                | Ok(VMaybe _ as result) -> Ok result
+                | Ok other -> Error(TypeMismatch("Maybe", ValueFormatting.valueTypeName other))
+                | Error e -> Error e
+            | [ other; _ ] -> Error(TypeMismatch("Maybe", ValueFormatting.valueTypeName other))
+            | _ -> Error(WrongArgumentCount(2, List.length args))
+
         [ "+",      VBuiltin("+", arithmeticOp (+))
           "-",      VBuiltin("-", arithmeticOp (-))
           "*",      VBuiltin("*", arithmeticOp (*))
@@ -166,5 +203,9 @@ module Builtins =
           "empty?", VBuiltin("empty?", isEmpty)
           "map",    VBuiltin("map", mapList)
           "filter", VBuiltin("filter", filterList)
-          "fold",   VBuiltin("fold", foldList) ]
+          "fold",   VBuiltin("fold", foldList)
+          "just",    VBuiltin("just", just)
+          "nothing", VBuiltin("nothing", nothing)
+          "fmap",    VBuiltin("fmap", fmap)
+          "bind",    VBuiltin("bind", bind) ]
         |> Map.ofList
