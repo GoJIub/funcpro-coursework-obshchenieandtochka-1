@@ -4,13 +4,14 @@ open Language
 
 let printUsage () =
     printfn "Usage:"
-    printfn "  dotnet run -- <file.x> [--ast]"
+    printfn "  dotnet run --project src/Cli -- <file.x> [--ast]"
     printfn ""
     printfn "Options:"
     printfn "  --ast    Print AST"
     printfn ""
-    printfn "Example:"
-    printfn "  dotnet run -- examples/test.x --ast"
+    printfn "Examples:"
+    printfn "  dotnet run --project src/Cli -- examples/test.x"
+    printfn "  dotnet run --project src/Cli -- examples/test.x --ast"
 
 [<EntryPoint>]
 let main args =
@@ -21,8 +22,10 @@ let main args =
 
     | _ ->
         try
+            // проверяем наличие флага --ast
             let showAst = args |> Array.exists (fun a -> a = "--ast")
 
+            // ищем первый аргумент, который не является флагом
             let filePath =
                 args
                 |> Array.tryFind (fun a -> not (a.StartsWith "--"))
