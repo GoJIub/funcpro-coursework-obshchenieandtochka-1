@@ -468,3 +468,243 @@ let ``builtin fold applies closure`` () =
         | Ok(VNumber 6) -> Assert.True(true)
         | result -> Assert.Fail($"Expected 6, got {result}")
     | _ -> Assert.Fail("Expected VBuiltin")
+
+// ─── just ───────────────────────────────────────────────────────────────────
+
+[<Fact>]
+let ``builtin just creates maybe with value`` () =
+    let just = builtins |> Map.find "just"
+    match just with
+    | VBuiltin(_, impl) ->
+        match impl [ VNumber 5 ] with
+        | Ok(VMaybe(Some(VNumber 5))) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Just 5, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+// ─── nothing ───────────────────────────────────────────────────────────────
+
+[<Fact>]
+let ``builtin nothing creates maybe with no value`` () =
+    let nothing = builtins |> Map.find "nothing"
+    match nothing with
+    | VBuiltin(_, impl) ->
+        match impl [] with
+        | Ok(VMaybe None) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Nothing, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin just rejects wrong argument count`` () =
+    let just = builtins |> Map.find "just"
+    match just with
+    | VBuiltin(_, impl) ->
+        match impl [] with
+        | Error(WrongArgumentCount(1, 0)) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected WrongArgumentCount, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin nothing rejects arguments`` () =
+    let nothing = builtins |> Map.find "nothing"
+    match nothing with
+    | VBuiltin(_, impl) ->
+        match impl [ VNumber 1 ] with
+        | Error(WrongArgumentCount(0, 1)) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected WrongArgumentCount, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+// ─── fmap ───────────────────────────────────────────────────────────────────
+
+[<Fact>]
+let ``builtin fmap applies function inside maybe`` () =
+    let fmap = builtins |> Map.find "fmap"
+    let double = VBuiltin("double", fun args ->
+        match args with
+        | [ VNumber n ] -> Ok(VNumber(n * 2))
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ double; VMaybe(Some(VNumber 5)) ] with
+        | Ok(VMaybe(Some(VNumber 10))) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Just 10, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin fmap applies closure inside maybe`` () =
+    let fmap = builtins |> Map.find "fmap"
+    let double = VClosure(
+        [ "x" ],
+        EApply(ESymbol "*", [ ESymbol "x"; ENumber 2 ]),
+        builtins)
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ double; VMaybe(Some(VNumber 5)) ] with
+        | Ok(VMaybe(Some(VNumber 10))) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Just 10, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin fmap over Nothing returns Nothing`` () =
+    let fmap = builtins |> Map.find "fmap"
+    let double = VBuiltin("double", fun args ->
+        match args with
+        | [ VNumber n ] -> Ok(VNumber(n * 2))
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ double; VMaybe None ] with
+        | Ok(VMaybe None) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Nothing, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin fmap rejects non-maybe`` () =
+    let fmap = builtins |> Map.find "fmap"
+    let double = VBuiltin("double", fun args ->
+        match args with
+        | [ VNumber n ] -> Ok(VNumber(n * 2))
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ double; VNumber 5 ] with
+        | Error(TypeMismatch _) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected TypeMismatch, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin fmap rejects non-function`` () =
+    let fmap = builtins |> Map.find "fmap"
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ VNumber 5; VMaybe(Some(VNumber 5)) ] with
+        | Error(TypeMismatch _) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected TypeMismatch, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin fmap propagates function error`` () =
+    let fmap = builtins |> Map.find "fmap"
+    let badFunc = VBuiltin("bad", fun args ->
+        match args with
+        | [ _ ] -> Error(OtherEvalError "bad function")
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ badFunc; VMaybe(Some(VNumber 5)) ] with
+        | Error(OtherEvalError "bad function") -> Assert.True(true)
+        | result -> Assert.Fail($"Expected propagated error, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin fmap propagates function error over Nothing`` () =
+    let fmap = builtins |> Map.find "fmap"
+    let badFunc = VBuiltin("bad", fun args ->
+        match args with
+        | [ _ ] -> Error(OtherEvalError "bad function")
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match fmap with
+    | VBuiltin(_, impl) ->
+        match impl [ badFunc; VMaybe None ] with
+        | Error(OtherEvalError "bad function") -> Assert.True(true)
+        | result -> Assert.Fail($"Expected propagated error, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+// ─── bind ───────────────────────────────────────────────────────────────────
+
+[<Fact>]
+let ``builtin bind applies function returning maybe`` () =
+    let bind = builtins |> Map.find "bind"
+    let toMaybeEven = VBuiltin("toMaybeEven", fun args ->
+        match args with
+        | [ VNumber n ] when n % 2 = 0 -> Ok(VMaybe(Some(VNumber n)))
+        | [ VNumber _ ] -> Ok(VMaybe None)
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VMaybe(Some(VNumber 4)); toMaybeEven ] with
+        | Ok(VMaybe(Some(VNumber 4))) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Just 4, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin bind with function returning Nothing returns Nothing`` () =
+    let bind = builtins |> Map.find "bind"
+    let toMaybeEven = VBuiltin("toMaybeEven", fun args ->
+        match args with
+        | [ VNumber n ] when n % 2 = 0 -> Ok(VMaybe(Some(VNumber n)))
+        | [ VNumber _ ] -> Ok(VMaybe None)
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VMaybe(Some(VNumber 5)); toMaybeEven ] with
+        | Ok(VMaybe None) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Nothing, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin bind with Nothing returns Nothing`` () =
+    let bind = builtins |> Map.find "bind"
+    let toMaybeEven = VBuiltin("toMaybeEven", fun args ->
+        match args with
+        | [ VNumber n ] when n % 2 = 0 -> Ok(VMaybe(Some(VNumber n)))
+        | [ VNumber _ ] -> Ok(VMaybe None)
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VMaybe None; toMaybeEven ] with
+        | Ok(VMaybe None) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected Nothing, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin bind rejects non-maybe`` () =
+    let bind = builtins |> Map.find "bind"
+    let toMaybeEven = VBuiltin("toMaybeEven", fun args ->
+        match args with
+        | [ VNumber n ] when n % 2 = 0 -> Ok(VMaybe(Some(VNumber n)))
+        | [ VNumber _ ] -> Ok(VMaybe None)
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VNumber 5; toMaybeEven ] with
+        | Error(TypeMismatch _) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected TypeMismatch, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin bind rejects function returning non-maybe`` () =
+    let bind = builtins |> Map.find "bind"
+    let badFunc = VBuiltin("bad", fun args ->
+        match args with
+        | [ VNumber _ ] -> Ok(VNumber 1)
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VMaybe(Some(VNumber 5)); badFunc ] with
+        | Error(TypeMismatch _) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected TypeMismatch, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin bind rejects non-function`` () =
+    let bind = builtins |> Map.find "bind"
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VMaybe(Some(VNumber 5)); VNumber 1 ] with
+        | Error(TypeMismatch _) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected TypeMismatch, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin bind propagates function error`` () =
+    let bind = builtins |> Map.find "bind"
+    let badFunc = VBuiltin("bad", fun args ->
+        match args with
+        | [ _ ] -> Error(OtherEvalError "bad function")
+        | _ -> Error(WrongArgumentCount(1, List.length args)))
+    match bind with
+    | VBuiltin(_, impl) ->
+        match impl [ VMaybe(Some(VNumber 5)); badFunc ] with
+        | Error(OtherEvalError "bad function") -> Assert.True(true)
+        | result -> Assert.Fail($"Expected propagated error, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
