@@ -107,3 +107,21 @@ module ParserTests =
         match Parser.parse "(let x = 10 x)" with
         | Ok (ELet("x", ENumber 10, ESymbol "x")) -> ()
         | _ -> failwith "let sugar failed"
+
+    [<Fact>]
+    let ``invalid lambda sugar param`` () =
+        match Parser.parse "(1 => 1)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error"
+
+    [<Fact>]
+    let ``invalid lambda sugar list param`` () =
+        match Parser.parse "((x 1) => x)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error"
+
+    [<Fact>]
+    let ``invalid lambda sugar missing body`` () =
+        match Parser.parse "(x =>)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error"
