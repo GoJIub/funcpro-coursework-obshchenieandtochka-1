@@ -2,62 +2,50 @@ open System
 open System.IO
 open Language
 
-let printUsage () =
-    printfn "Usage:"
-    printfn "  dotnet run --project src/Cli -- <file.x> [--ast]"
-    printfn ""
-    printfn "Options:"
-    printfn "  --ast    Print AST"
-    printfn ""
-    printfn "Examples:"
-    printfn "  dotnet run --project src/Cli -- examples/test.x"
-    printfn "  dotnet run --project src/Cli -- examples/test.x --ast"
-
 [<EntryPoint>]
 let main args =
-    match args with
-    | [| |] ->
+    let printUsage () =
+        printfn "Usage:"
+        printfn "  dotnet run --project src/Cli -- <file.x> [--ast]"
+        printfn ""
+        printfn "Options:"
+        printfn "  --ast    Print AST"
+        printfn ""
+        printfn "Example:"
+        printfn "  dotnet run --project src/Cli -- examples/test.x --ast"
+        printfn "  dotnet run --project src/Cli -- examples/test.x"
+
+    match args |> Array.toList with
+    | [] ->
         printUsage ()
         1
 
-    | _ ->
-        try
-            // проверяем наличие флага --ast
-            let showAst = args |> Array.exists (fun a -> a = "--ast")
+    | filePath :: rest ->
+        if not (File.Exists filePath) then
+            printfn $"File not found: {filePath}"
+            1
+        else
+            let source = File.ReadAllText filePath
 
-            // ищем первый аргумент, который не является флагом
-            let filePath =
-                args
-                |> Array.tryFind (fun a -> not (a.StartsWith "--"))
-
-            match filePath with
-            | None ->
-                printfn "Error: file path is required"
-                printUsage ()
+            match Parser.parse source with
+            | Error err ->
+                printfn $"Parse error: {err}"
                 1
 
-            | Some path ->
-                if not (File.Exists path) then
-                    printfn $"Error: file not found: {path}"
-                    1
+            | Ok ast ->
+                if rest |> List.contains "--ast" then
+                    printfn "AST:"
+                    printfn "%A" ast
+                    0
                 else
-                    let source = File.ReadAllText path
+                    let env = Builtins.makeBuiltins Evaluator.eval
 
-                    match Parser.parse source with
-                    | Ok expr ->
-                        if showAst then
-                            printfn "AST:"
-                            printfn "%A" expr
-                        else
-                            printfn "Parse success:"
-                            printfn "%A" expr
+                    match Evaluator.eval env ast with
+                    | Ok value ->
+                        printfn "Result:"
+                        printfn "%A" value
                         0
 
                     | Error err ->
-                        printfn "Parse error:"
-                        printfn "%A" err
+                        printfn $"Runtime error: {err}"
                         1
-
-        with ex ->
-            printfn $"Unexpected error: {ex.Message}"
-            1
