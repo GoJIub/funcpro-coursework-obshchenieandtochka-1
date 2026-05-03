@@ -36,8 +36,17 @@ module Parser =
         | atom :: rest ->
             (Atom atom, rest)
 
+    let validateParam (s: string) =
+        match Int32.TryParse(s) with
+        | true, _ -> failwith "Invalid parameter name"
+        | _ ->
+            match s with
+            | "true" | "false" -> failwith "Invalid parameter name"
+            | _ -> s
+
     let rec toExpr sexpr =
         match sexpr with
+
         | Atom s ->
             match Int32.TryParse(s) with
             | true, n -> ENumber n
@@ -47,43 +56,58 @@ module Parser =
                 | "false" -> EBool false
                 | _ -> ESymbol s
 
-
         | List [Atom "if"; cond; thenExpr; elseExpr] ->
             EIf(toExpr cond, toExpr thenExpr, toExpr elseExpr)
+
+        | List (Atom "if" :: _) ->
+            failwith "Invalid if syntax"
+
+
+        | List [Atom "let"; Atom _; Atom "="; _] ->
+            failwith "Invalid let syntax"
+
+        | List [Atom "let"; Atom name; Atom "="; valueExpr; body] ->
+            ELet(name, toExpr valueExpr, toExpr body)
 
         | List [Atom "let"; Atom name; valueExpr; body] ->
             ELet(name, toExpr valueExpr, toExpr body)
 
+        | List (Atom "let" :: _) ->
+            failwith "Invalid let syntax"
+
         | List [Atom "letrec"; Atom name; valueExpr; body] ->
             ELetRec(name, toExpr valueExpr, toExpr body)
+
+        | List (Atom "letrec" :: _) ->
+            failwith "Invalid letrec syntax"
 
         | List [Atom "lambda"; List parameters; body] ->
             let paramNames =
                 parameters
                 |> List.map (function
-                    | Atom s ->
-                        match Int32.TryParse(s) with
-                        | true, _ -> failwith "Invalid parameter"
-                        | _ ->
-                            match s with
-                            | "true" | "false" -> failwith "Invalid parameter"
-                            | _ -> s
+                    | Atom s -> validateParam s
                     | _ -> failwith "Invalid parameter")
             ELambda(paramNames, toExpr body)
 
+        | List [Atom param; Atom "=>"; body] ->
+            ELambda([validateParam param], toExpr body)
 
-        | List (Atom "if" :: _) ->
-            failwith "Invalid if syntax"
+        | List [List parameters; Atom "=>"; body] ->
+            let paramNames =
+                parameters
+                |> List.map (function
+                    | Atom s -> validateParam s
+                    | _ -> failwith "Invalid parameter")
+            ELambda(paramNames, toExpr body)
 
-        | List (Atom "let" :: _) ->
-            failwith "Invalid let syntax"
+        | List (Atom _ :: Atom "=>" :: _) ->
+            failwith "Invalid lambda sugar syntax"
 
-        | List (Atom "letrec" :: _) ->
-            failwith "Invalid letrec syntax"
+        | List (List _ :: Atom "=>" :: _) ->
+            failwith "Invalid lambda sugar syntax"
 
         | List (Atom "lambda" :: _) ->
             failwith "Invalid lambda syntax"
-
 
         | List (head :: tail) ->
             let callee = toExpr head
