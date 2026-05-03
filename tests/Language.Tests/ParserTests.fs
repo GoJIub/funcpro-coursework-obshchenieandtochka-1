@@ -131,3 +131,27 @@ module ParserTests =
         match Parser.parse "(let x = 10)" with
         | Error _ -> ()
         | _ -> failwith "Expected error"
+
+    [<Fact>]
+    let ``parse delay`` () =
+        match Parser.parse "(delay 42)" with
+        | Ok (EDelay (ENumber 42)) -> ()
+        | _ -> failwith "delay parse failed"
+
+    [<Fact>]
+    let ``parse force`` () =
+        match Parser.parse "(force x)" with
+        | Ok (EForce (ESymbol "x")) -> ()
+        | _ -> failwith "force parse failed"
+
+    [<Fact>]
+    let ``invalid delay returns error`` () =
+        match Parser.parse "(delay)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error"
+
+    [<Fact>]
+    let ``invalid force returns error`` () =
+        match Parser.parse "(force 1 2)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error"
