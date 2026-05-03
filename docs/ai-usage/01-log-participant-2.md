@@ -432,4 +432,4 @@
 - tests/Language.Tests/ParserTests.fs
 - docs/ai-usage/01-log-participant-2.md
 
-**Связанный PR:** pending
+**Связанный PR:** #57
