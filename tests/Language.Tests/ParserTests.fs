@@ -190,6 +190,48 @@ module ParserTests =
         | Error _ -> ()
         | _ -> failwith "Expected error for invalid or"
 
+    // ── Cond ────────────────────────────────────────────────────────────────
+
+    [<Fact>]
+    let ``parse cond as nested if`` () =
+        match Parser.parse "(cond ((= x 0) 0) ((< x 0) -1) (true 1))" with
+        | Ok (
+            EIf(
+                EApply(ESymbol "=", [ ESymbol "x"; ENumber 0 ]),
+                ENumber 0,
+                EIf(
+                    EApply(ESymbol "<", [ ESymbol "x"; ENumber 0 ]),
+                    ENumber -1,
+                    ENumber 1
+                )
+            )
+          ) -> ()
+        | _ -> failwith "Expected cond to expand into nested if"
+
+    [<Fact>]
+    let ``parse cond with only true clause as expression`` () =
+        match Parser.parse "(cond (true 42))" with
+        | Ok(ENumber 42) -> ()
+        | _ -> failwith "Expected single true cond clause to parse as expression"
+
+    [<Fact>]
+    let ``invalid empty cond returns error`` () =
+        match Parser.parse "(cond)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for empty cond"
+
+    [<Fact>]
+    let ``invalid cond clause shape returns error`` () =
+        match Parser.parse "(cond (= x 0) (true 1))" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid cond clause"
+
+    [<Fact>]
+    let ``invalid cond without final true clause returns error`` () =
+        match Parser.parse "(cond ((= x 0) 0))" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for cond without final true clause"
+
     // ── Let ──────────────────────────────────────────────────────────────────
 
     [<Fact>]
@@ -241,6 +283,48 @@ module ParserTests =
         match Parser.parse "(let x)" with
         | Error _ -> ()
         | _ -> failwith "Expected error for (let x)"
+
+    // ── Let star ─────────────────────────────────────────────────────────────
+
+    [<Fact>]
+    let ``parse let star as nested lets`` () =
+        match Parser.parse "(let* ((x 1) (y (+ x 2))) (+ x y))" with
+        | Ok (
+            ELet(
+                "x",
+                ENumber 1,
+                ELet(
+                    "y",
+                    EApply(ESymbol "+", [ ESymbol "x"; ENumber 2 ]),
+                    EApply(ESymbol "+", [ ESymbol "x"; ESymbol "y" ])
+                )
+            )
+          ) -> ()
+        | _ -> failwith "Expected let* to expand into nested lets"
+
+    [<Fact>]
+    let ``parse let star with empty bindings as body`` () =
+        match Parser.parse "(let* () (+ 1 2))" with
+        | Ok(EApply(ESymbol "+", [ ENumber 1; ENumber 2 ])) -> ()
+        | _ -> failwith "Expected empty let* bindings to parse as body"
+
+    [<Fact>]
+    let ``invalid let star without binding list returns error`` () =
+        match Parser.parse "(let* (x 1) x)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for let* without binding list"
+
+    [<Fact>]
+    let ``invalid let star binding shape returns error`` () =
+        match Parser.parse "(let* ((x 1 2)) x)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid let* binding"
+
+    [<Fact>]
+    let ``invalid let star numeric binding name returns error`` () =
+        match Parser.parse "(let* ((1 2)) 1)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for numeric let* binding name"
 
     // ── Letrec ───────────────────────────────────────────────────────────────
 
