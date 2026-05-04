@@ -333,3 +333,26 @@ let ``evaluator force rejects non-thunk value`` () =
     match Evaluator.eval Environment.empty (EForce(ENumber 1)) with
     | Error(TypeMismatch("Thunk", "Number")) -> Assert.True(true)
     | result -> Assert.Fail($"Expected thunk type mismatch, got {result}")
+
+[<Fact>]
+let ``evaluator evaluates empty list expression`` () =
+    match Evaluator.eval Environment.empty (EList []) with
+    | Ok(VList []) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected empty list, got {result}")
+
+[<Fact>]
+let ``evaluator evaluates list expression elements in environment`` () =
+    let env = Environment.empty |> Environment.extend "x" (VNumber 2)
+    let expr = EList [ ENumber 1; ESymbol "x"; EBool true ]
+
+    match Evaluator.eval env expr with
+    | Ok(VList [ VNumber 1; VNumber 2; VBool true ]) -> Assert.True(true)
+    | result -> Assert.Fail($"Expected evaluated list, got {result}")
+
+[<Fact>]
+let ``evaluator propagates list element error`` () =
+    let expr = EList [ ENumber 1; ESymbol "missing"; ENumber 3 ]
+
+    match Evaluator.eval Environment.empty expr with
+    | Error(UnboundVariable "missing") -> Assert.True(true)
+    | result -> Assert.Fail($"Expected list element error, got {result}")

@@ -139,8 +139,10 @@ module Evaluator =
                     | Error error -> Error error
                 | Error error -> Error error
 
-            | EList _ ->
-                Error (OtherEvalError "list evaluation is not implemented yet.")
+            | EList items ->
+                match evalArguments env items with
+                | Ok values -> Ok (VList values)
+                | Error error -> Error error
 
         match result with
         | Ok value ->
