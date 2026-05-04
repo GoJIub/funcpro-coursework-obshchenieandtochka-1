@@ -383,3 +383,55 @@
 **Связанный PR:** #61
 
 ---
+
+**Дата:** 04.05.2026
+**Задача:** Issue #62 — добавить parser sugar `let*` и `cond`
+
+**Prompt / темы обращений:**
+Сессия с Codex по задаче из зоны Участника 2, которую временно взял
+Участник 1:
+1. Разобрать предложение команды добавить `let*` и `cond` как синтаксический
+   сахар.
+2. Реализовать обе формы на уровне parser без изменения контрактов `Expr`,
+   `Value`, `Env`, `ParseError`, `EvalError`, `parse` и `eval`.
+3. Развернуть `let*` в цепочку вложенных `ELet`.
+4. Развернуть `cond` в цепочку вложенных `EIf` с обязательной последней веткой
+   `(true fallback)`.
+5. Добавить parser tests, runnable examples и example tests.
+6. Обновить `docs/syntax.md`, `docs/language-spec.md` и AI usage log.
+
+**Ответ ИИ / краткое содержание:**
+- `let*` реализован как parser sugar: bindings преобразуются во вложенные
+  `ELet`, поэтому последующие binding expressions видят предыдущие привязки
+  на этапе eval.
+- `cond` реализован как parser sugar поверх `EIf`; пустой `cond`, неверные
+  clauses и отсутствие финальной `true` ветки возвращают parse error.
+- Добавлены примеры `examples/let-star.x` и `examples/cond.x`.
+- Добавлены parser tests для happy path и ошибок, а также example tests для
+  запуска новых `.x` файлов через parser/evaluator pipeline.
+
+**Что принято:**
+- AST и evaluator не меняются.
+- `let*` с пустым списком bindings возвращает body.
+- Последняя ветка `cond` должна быть `(true expr)`, потому что в текущем AST нет
+  отдельного значения для отсутствующего результата.
+- Задача относится к зоне Участника 2, но реализуется Участником 1, чтобы не
+  блокировать финальный этап проекта.
+
+**Что изменено человеком:**
+- Issue #62 создан вручную и назначен на Участника 1 и Участника 2.
+
+**Связанные файлы:**
+- `src/Language/Parser.fs`
+- `tests/Language.Tests/ParserTests.fs`
+- `tests/Language.Tests/ExampleTests.fs`
+- `examples/let-star.x`
+- `examples/cond.x`
+- `docs/syntax.md`
+- `docs/language-spec.md`
+- `docs/ai-usage/01-log-participant-1.md`
+
+**Связанный Issue:** #62
+**Связанный PR:** pending
+
+---
