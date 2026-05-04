@@ -431,7 +431,6 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный Issue:** #62
-**Связанный PR:** pending
+**Связанный PR:** #63
 
 ---
