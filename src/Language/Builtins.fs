@@ -7,6 +7,11 @@ module Builtins =
         | VNumber n -> Ok n
         | other -> Error(TypeMismatch("Number", ValueFormatting.valueTypeName other))
 
+    let private expectBool (value: Value) : Result<bool, EvalError> =
+        match value with
+        | VBool b -> Ok b
+        | other -> Error(TypeMismatch("Bool", ValueFormatting.valueTypeName other))
+
     let private arithmeticOp
         (op: int -> int -> int)
         (args: Value list)
@@ -47,6 +52,14 @@ module Builtins =
         | [ VBool a; VBool b ] -> Ok(VBool(a = b))
         | [ _; _ ] -> Error(TypeMismatch("matching types", "mismatched types"))
         | _ -> Error(WrongArgumentCount(2, List.length args))
+
+    let private logicalNot (args: Value list) : Result<Value, EvalError> =
+        match args with
+        | [ arg ] ->
+            match expectBool arg with
+            | Ok value -> Ok(VBool(not value))
+            | Error e -> Error e
+        | _ -> Error(WrongArgumentCount(1, List.length args))
 
     let makeBuiltins (eval: Env -> Expr -> Result<Value, EvalError>) : Map<string, Value> =
 
@@ -196,6 +209,7 @@ module Builtins =
           "=",      VBuiltin("=", eq)
           "<",      VBuiltin("<", compareOp (<))
           ">",      VBuiltin(">", compareOp (>))
+          "not",    VBuiltin("not", logicalNot)
           "list",   VBuiltin("list", makeList)
           "head",   VBuiltin("head", head)
           "tail",   VBuiltin("tail", tail)
