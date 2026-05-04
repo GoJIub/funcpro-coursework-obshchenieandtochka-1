@@ -118,3 +118,17 @@ let ``lazy error defers division by zero`` () =
     | Ok(VNumber 42) -> Assert.True(true)
     | Error message -> Assert.Fail($"Expected 42, got {message}")
     | result -> Assert.Fail(sprintf "Expected 42, got %A" result)
+
+[<Fact>]
+let ``let star returns 6`` () =
+    match runFile "let-star.x" with
+    | Ok(VNumber 6) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 6, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 6, got %A" result)
+
+[<Fact>]
+let ``cond returns selected branch`` () =
+    match runFile "cond.x" with
+    | Ok(VNumber -1) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected -1, got {message}")
+    | result -> Assert.Fail(sprintf "Expected -1, got %A" result)

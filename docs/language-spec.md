@@ -34,7 +34,9 @@ false
 x
 (if condition then-expr else-expr)
 (let name value-expr body)
+(let* ((name1 value1) (name2 value2)) body)
 (letrec name value-expr body)
+(cond (condition1 result1) (true fallback-result))
 (lambda (arg1 arg2) body)
 (delay expr)
 (force expr)
@@ -95,6 +97,15 @@ val parse : string -> Result<Expr, ParseError>
 
 Первый каркас проекта содержит только заглушку парсера. Полноценная реализация
 парсера относится к зоне ответственности Участника 2.
+
+Parser sugar:
+
+- `(let name = value-expr body)` эквивалентен `(let name value-expr body)`.
+- `(let* ((name1 value1) (name2 value2)) body)` разворачивается в цепочку
+  вложенных `ELet`.
+- `(cond (condition1 result1) (true fallback-result))` разворачивается в
+  цепочку вложенных `EIf`; последняя ветка должна иметь условие `true`.
+- `(param => body)` и `((param1 param2) => body)` эквивалентны `lambda`.
 
 ## Контракт интерпретатора
 

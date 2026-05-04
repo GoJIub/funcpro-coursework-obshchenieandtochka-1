@@ -47,6 +47,30 @@ my-var
 
 ---
 
+## Cond
+
+Многоветочное условие. Каждая ветка записывается как `(condition result)`.
+Последняя ветка должна быть `(true result)`, она используется как fallback.
+Парсер разворачивает `cond` в цепочку вложенных `if`.
+
+```
+(cond
+  (condition1 result1)
+  (condition2 result2)
+  (true fallback-result))
+```
+
+Пример:
+
+```
+(cond
+  ((= x 0) 0)
+  ((< x 0) -1)
+  (true 1))
+```
+
+---
+
 ## Let
 
 Связывает имя со значением в теле выражения.
@@ -68,6 +92,32 @@ my-var
 ```
 (let x 10 (+ x 1))
 (let x = 10 (+ x 1))
+```
+
+---
+
+## Let*
+
+Последовательные привязки. Каждая следующая binding expression вычисляется в
+окружении, где уже доступны предыдущие привязки. Парсер разворачивает `let*` в
+цепочку вложенных `let`.
+
+```
+(let* ((name1 value1) (name2 value2))
+  body)
+```
+
+Пример:
+
+```
+(let* ((x 1) (y 2) (z (+ x y)))
+  (+ (+ x y) z))
+```
+
+`let*` с пустым списком bindings возвращает body:
+
+```
+(let* () (+ 1 2))
 ```
 
 ---
@@ -185,7 +235,9 @@ my-var
 | Лишние токены после выражения | `Unexpected tokens after expression` |
 | Неверное число аргументов у `if` | `Invalid if syntax` |
 | Неверное число аргументов у `let` | `Invalid let syntax` |
+| Неверный синтаксис `let*` | `Invalid let* syntax` / `Invalid let* binding syntax` |
 | Неверное число аргументов у `letrec` | `Invalid letrec syntax` |
+| Неверный синтаксис `cond` | `Invalid cond syntax` / `Invalid cond clause syntax` |
 | Неверное число аргументов у `lambda` | `Invalid lambda syntax` |
 | Неверный параметр lambda (число или bool) | `Invalid parameter name` |
 | Неверный синтаксис `=>` | `Invalid lambda sugar syntax` |

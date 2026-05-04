@@ -44,7 +44,36 @@ module Parser =
             | "true" | "false" -> failwith "Invalid parameter name"
             | _ -> s
 
-    let rec toExpr sexpr =
+    let parseLetStarBinding binding =
+        match binding with
+        | List [Atom name; valueExpr] -> validateParam name, valueExpr
+        | _ -> failwith "Invalid let* binding syntax"
+
+    let parseCondClause clause =
+        match clause with
+        | List [condition; resultExpr] -> condition, resultExpr
+        | _ -> failwith "Invalid cond clause syntax"
+
+    let rec expandLetStar bindings body =
+        match bindings with
+        | [] -> toExpr body
+        | binding :: rest ->
+            let name, valueExpr = parseLetStarBinding binding
+            ELet(name, toExpr valueExpr, expandLetStar rest body)
+
+    and expandCond clauses =
+        match clauses with
+        | [] -> failwith "Invalid cond syntax"
+        | [lastClause] ->
+            let condition, resultExpr = parseCondClause lastClause
+            match condition with
+            | Atom "true" -> toExpr resultExpr
+            | _ -> failwith "Invalid cond syntax"
+        | clause :: rest ->
+            let condition, resultExpr = parseCondClause clause
+            EIf(toExpr condition, toExpr resultExpr, expandCond rest)
+
+    and toExpr sexpr =
         match sexpr with
 
         | Atom s ->
@@ -62,6 +91,8 @@ module Parser =
         | List (Atom "if" :: _) ->
             failwith "Invalid if syntax"
 
+        | List (Atom "cond" :: clauses) ->
+            expandCond clauses
 
         | List [Atom "let"; Atom _; Atom "="; _] ->
             failwith "Invalid let syntax"
@@ -74,6 +105,12 @@ module Parser =
 
         | List (Atom "let" :: _) ->
             failwith "Invalid let syntax"
+
+        | List [Atom "let*"; List bindings; body] ->
+            expandLetStar bindings body
+
+        | List (Atom "let*" :: _) ->
+            failwith "Invalid let* syntax"
 
         | List [Atom "letrec"; Atom name; valueExpr; body] ->
             ELetRec(name, toExpr valueExpr, toExpr body)
