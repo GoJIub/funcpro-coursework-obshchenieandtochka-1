@@ -6,29 +6,36 @@ open Language.Evaluator
 open Language.Environment
 open Language.Builtins
 open Language.Trace
+open Language.PrettyPrinter
 
 let printUsage () =
     printfn "Usage:"
-    printfn "  dotnet run --project src/Cli -- <file.x> [--ast] [--trace]"
+    printfn "  dotnet run --project src/Cli -- <file.x> [--ast] [--trace] [--help]"
     printfn ""
     printfn "Options:"
-    printfn "  --ast    Print AST"
-    printfn "  --trace  Enable evaluation trace"
+    printfn "  --ast     Print AST"
+    printfn "  --trace   Show evaluation trace"
+    printfn "  --help    Show this message"
     printfn ""
-    printfn "Example:"
+    printfn "Examples:"
+    printfn "  dotnet run --project src/Cli -- examples/test.x"
+    printfn "  dotnet run --project src/Cli -- examples/test.x --ast"
     printfn "  dotnet run --project src/Cli -- examples/test.x --trace"
 
 [<EntryPoint>]
 let main args =
-    if args.Length = 0 then
+    let argsList = args |> Array.toList
+
+    // --help или пустой запуск
+    if argsList.IsEmpty || argsList |> List.contains "--help" then
         printUsage ()
-        1
+        0
     else
         let filePath = args.[0]
         let flags = args |> Array.skip 1
 
         if not (File.Exists filePath) then
-            printfn "File not found: %s" filePath
+            printfn "Error: file not found: %s" filePath
             1
         else
             let source = File.ReadAllText filePath
@@ -55,7 +62,7 @@ let main args =
 
                 match eval env expr with
                 | Ok value ->
-                    printfn "Result: %s" (PrettyPrinter.printValue value)
+                    printfn "Result: %s" (printValue value)
                     0
                 | Error err ->
                     printfn "Runtime error: %A" err
