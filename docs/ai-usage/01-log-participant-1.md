@@ -434,3 +434,47 @@
 **Связанный PR:** #63
 
 ---
+
+**Дата:** 04.05.2026
+**Задача:** Issue #64 — добавить `not`, `and` и `or`
+
+**Prompt / темы обращений:**
+Сессия с Codex по предложениям команды для финального quality-этапа:
+1. Разобрать предложение про `not`, `and`, `or`.
+2. Реализовать `not` как обычный builtin для boolean-значений.
+3. Реализовать `and` / `or` как parser sugar с short-circuit семантикой
+   без изменения контрактов `Expr`, `Value`, `Env`, `ParseError`,
+   `EvalError`, `parse` и `eval`.
+4. Добавить focused tests для builtin, parser expansion и short-circuit
+   поведения через `eval`.
+5. Обновить пользовательскую документацию, спецификацию языка и runnable
+   example.
+
+**Ответ ИИ / краткое содержание:**
+- `not` добавлен в builtins и возвращает противоположное boolean-значение.
+- Некорректный тип аргумента `not` возвращает `TypeMismatch("Bool", actual)`.
+- Некорректная arity `not` возвращает `WrongArgumentCount`.
+- `(and left right)` разворачивается в `EIf(left, right, false)`.
+- `(or left right)` разворачивается в `EIf(left, true, right)`.
+- Short-circuit проверен через выражения с `(/ 1 0)` во второй ветке.
+
+**Что принято:**
+- `and` и `or` сделаны бинарными формами, чтобы не расширять scope задачи.
+- AST, runtime values, evaluator contract и формат builtins не менялись.
+- Задача затрагивает parser/syntax зону Участника 2, но временно выполнена
+  Участником 1, чтобы не блокировать финальный этап.
+
+**Связанные файлы:**
+- `src/Language/Builtins.fs`
+- `src/Language/Parser.fs`
+- `tests/Language.Tests/BuiltinTests.fs`
+- `tests/Language.Tests/ParserTests.fs`
+- `tests/Language.Tests/EvaluatorTests.fs`
+- `tests/Language.Tests/ExampleTests.fs`
+- `examples/logical-forms.x`
+- `docs/standard-library.md`
+- `docs/syntax.md`
+- `docs/language-spec.md`
+- `docs/ai-usage/01-log-participant-1.md`
+
+---

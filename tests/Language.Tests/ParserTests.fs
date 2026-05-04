@@ -152,6 +152,44 @@ module ParserTests =
         | Error _ -> ()
         | _ -> failwith "Expected error for (if)"
 
+    // ── Logical forms ───────────────────────────────────────────────────────
+
+    [<Fact>]
+    let ``parse and as if`` () =
+        match Parser.parse "(and x y)" with
+        | Ok (EIf(ESymbol "x", ESymbol "y", EBool false)) -> ()
+        | _ -> failwith "Expected and to expand into if"
+
+    [<Fact>]
+    let ``parse or as if`` () =
+        match Parser.parse "(or x y)" with
+        | Ok (EIf(ESymbol "x", EBool true, ESymbol "y")) -> ()
+        | _ -> failwith "Expected or to expand into if"
+
+    [<Fact>]
+    let ``invalid and missing arg returns error`` () =
+        match Parser.parse "(and true)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid and"
+
+    [<Fact>]
+    let ``invalid and too many args returns error`` () =
+        match Parser.parse "(and true false true)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid and"
+
+    [<Fact>]
+    let ``invalid or missing arg returns error`` () =
+        match Parser.parse "(or false)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid or"
+
+    [<Fact>]
+    let ``invalid or too many args returns error`` () =
+        match Parser.parse "(or false true false)" with
+        | Error _ -> ()
+        | _ -> failwith "Expected error for invalid or"
+
     // ── Cond ────────────────────────────────────────────────────────────────
 
     [<Fact>]

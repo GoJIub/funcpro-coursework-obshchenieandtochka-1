@@ -187,6 +187,48 @@ let ``builtin compare less returns false`` () =
         | result -> Assert.Fail($"Expected false, got {result}")
     | _ -> Assert.Fail("Expected VBuiltin")
 
+// ─── not ────────────────────────────────────────────────────────────────────
+
+[<Fact>]
+let ``builtin not returns false for true`` () =
+    let notFunc = builtins |> Map.find "not"
+    match notFunc with
+    | VBuiltin(_, impl) ->
+        match impl [ VBool true ] with
+        | Ok(VBool false) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected false, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin not returns true for false`` () =
+    let notFunc = builtins |> Map.find "not"
+    match notFunc with
+    | VBuiltin(_, impl) ->
+        match impl [ VBool false ] with
+        | Ok(VBool true) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected true, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin not rejects non-bool`` () =
+    let notFunc = builtins |> Map.find "not"
+    match notFunc with
+    | VBuiltin(_, impl) ->
+        match impl [ VNumber 1 ] with
+        | Error(TypeMismatch("Bool", "Number")) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected TypeMismatch, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
+[<Fact>]
+let ``builtin not rejects wrong argument count`` () =
+    let notFunc = builtins |> Map.find "not"
+    match notFunc with
+    | VBuiltin(_, impl) ->
+        match impl [ VBool true; VBool false ] with
+        | Error(WrongArgumentCount(1, 2)) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected WrongArgumentCount, got {result}")
+    | _ -> Assert.Fail("Expected VBuiltin")
+
 // ─── list ───────────────────────────────────────────────────────────────────
 
 [<Fact>]
