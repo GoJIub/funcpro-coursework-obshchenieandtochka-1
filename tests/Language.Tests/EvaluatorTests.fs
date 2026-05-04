@@ -356,3 +356,43 @@ let ``evaluator propagates list element error`` () =
     match Evaluator.eval Environment.empty expr with
     | Error(UnboundVariable "missing") -> Assert.True(true)
     | result -> Assert.Fail($"Expected list element error, got {result}")
+
+[<Fact>]
+let ``parsed and short circuits false branch`` () =
+    match Parser.parse "(and false (/ 1 0))" with
+    | Ok expr ->
+        let env = Builtins.makeBuiltins Evaluator.eval
+        match Evaluator.eval env expr with
+        | Ok(VBool false) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected false without division error, got {result}")
+    | Error e -> Assert.Fail($"Expected parse success, got {e}")
+
+[<Fact>]
+let ``parsed and evaluates right side when left is true`` () =
+    match Parser.parse "(and true false)" with
+    | Ok expr ->
+        let env = Builtins.makeBuiltins Evaluator.eval
+        match Evaluator.eval env expr with
+        | Ok(VBool false) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected false, got {result}")
+    | Error e -> Assert.Fail($"Expected parse success, got {e}")
+
+[<Fact>]
+let ``parsed or short circuits true branch`` () =
+    match Parser.parse "(or true (/ 1 0))" with
+    | Ok expr ->
+        let env = Builtins.makeBuiltins Evaluator.eval
+        match Evaluator.eval env expr with
+        | Ok(VBool true) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected true without division error, got {result}")
+    | Error e -> Assert.Fail($"Expected parse success, got {e}")
+
+[<Fact>]
+let ``parsed or evaluates right side when left is false`` () =
+    match Parser.parse "(or false true)" with
+    | Ok expr ->
+        let env = Builtins.makeBuiltins Evaluator.eval
+        match Evaluator.eval env expr with
+        | Ok(VBool true) -> Assert.True(true)
+        | result -> Assert.Fail($"Expected true, got {result}")
+    | Error e -> Assert.Fail($"Expected parse success, got {e}")

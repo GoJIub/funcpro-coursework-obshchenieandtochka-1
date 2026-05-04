@@ -62,6 +62,17 @@ module Parser =
         | List (Atom "if" :: _) ->
             failwith "Invalid if syntax"
 
+        | List [Atom "and"; left; right] ->
+            EIf(toExpr left, toExpr right, EBool false)
+
+        | List (Atom "and" :: _) ->
+            failwith "Invalid and syntax"
+
+        | List [Atom "or"; left; right] ->
+            EIf(toExpr left, EBool true, toExpr right)
+
+        | List (Atom "or" :: _) ->
+            failwith "Invalid or syntax"
 
         | List [Atom "let"; Atom _; Atom "="; _] ->
             failwith "Invalid let syntax"

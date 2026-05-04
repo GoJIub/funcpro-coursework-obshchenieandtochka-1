@@ -38,6 +38,9 @@ x
 (lambda (arg1 arg2) body)
 (delay expr)
 (force expr)
+(not expr)
+(and left right)
+(or left right)
 (function arg1 arg2)
 (list item1 item2 item3)
 ```
@@ -110,6 +113,10 @@ val eval : Env -> Expr -> Result<Value, EvalError>
 - `ENumber` и `EBool` вычисляются в соответствующие runtime-значения.
 - `ESymbol` ищется в текущем окружении.
 - `EIf` сначала вычисляет условие; ветка выбирается только для `VBool`.
+- `(and left right)` парсится в `EIf(left, right, false)`, поэтому `right`
+  вычисляется только если `left` вычислился в `true`.
+- `(or left right)` парсится в `EIf(left, true, right)`, поэтому `right`
+  вычисляется только если `left` вычислился в `false`.
 - `ELet` сначала вычисляет значение, затем тело в расширенном окружении.
 - `ELambda` вычисляется в `VClosure` с текущим лексическим окружением.
 - `EApply` сначала вычисляет вызываемое выражение и аргументы, затем применяет

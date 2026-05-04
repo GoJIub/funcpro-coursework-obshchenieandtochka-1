@@ -47,6 +47,32 @@ my-var
 
 ---
 
+## Logical Forms
+
+`not` вычисляет один boolean-аргумент и возвращает противоположное значение.
+
+```
+(not true)
+```
+
+`and` и `or` принимают два аргумента и вычисляются с short-circuit семантикой:
+второй аргумент вычисляется только если он нужен для результата.
+
+```
+(and left right)
+(or left right)
+```
+
+Примеры:
+
+```
+(not false)
+(and false (/ 1 0))
+(or true (/ 1 0))
+```
+
+---
+
 ## Let
 
 Связывает имя со значением в теле выражения.
@@ -184,6 +210,7 @@ my-var
 | Лишняя закрывающая скобка | `Unexpected ')'` |
 | Лишние токены после выражения | `Unexpected tokens after expression` |
 | Неверное число аргументов у `if` | `Invalid if syntax` |
+| Неверное число аргументов у `and`/`or` | `Invalid and/or syntax` |
 | Неверное число аргументов у `let` | `Invalid let syntax` |
 | Неверное число аргументов у `letrec` | `Invalid letrec syntax` |
 | Неверное число аргументов у `lambda` | `Invalid lambda syntax` |

@@ -118,3 +118,10 @@ let ``lazy error defers division by zero`` () =
     | Ok(VNumber 42) -> Assert.True(true)
     | Error message -> Assert.Fail($"Expected 42, got {message}")
     | result -> Assert.Fail(sprintf "Expected 42, got %A" result)
+
+[<Fact>]
+let ``logical forms return 42`` () =
+    match runFile "logical-forms.x" with
+    | Ok(VNumber 42) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 42, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 42, got %A" result)
