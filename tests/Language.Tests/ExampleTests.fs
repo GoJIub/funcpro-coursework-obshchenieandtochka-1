@@ -83,3 +83,38 @@ let ``lazy returns 3`` () =
     | Ok(VNumber 3) -> Assert.True(true)
     | Error message -> Assert.Fail($"Expected 3, got {message}")
     | result -> Assert.Fail(sprintf "Expected 3, got %A" result)
+
+[<Fact>]
+let ``arrow lambda returns 15`` () =
+    match runFile "arrow-lambda.x" with
+    | Ok(VNumber 15) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 15, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 15, got %A" result)
+
+[<Fact>]
+let ``let sugar returns 30`` () =
+    match runFile "let-sugar.x" with
+    | Ok(VNumber 30) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 30, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 30, got %A" result)
+
+[<Fact>]
+let ``lazy memo returns 3`` () =
+    match runFile "lazy-memo.x" with
+    | Ok(VNumber 3) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 3, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 3, got %A" result)
+
+[<Fact>]
+let ``lazy scope captures creation environment`` () =
+    match runFile "lazy-scope.x" with
+    | Ok(VNumber 10) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 10, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 10, got %A" result)
+
+[<Fact>]
+let ``lazy error defers division by zero`` () =
+    match runFile "lazy-error.x" with
+    | Ok(VNumber 42) -> Assert.True(true)
+    | Error message -> Assert.Fail($"Expected 42, got {message}")
+    | result -> Assert.Fail(sprintf "Expected 42, got %A" result)
