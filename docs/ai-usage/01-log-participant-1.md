@@ -374,17 +374,12 @@
 - Parser, builtin `list`, `Value`, `EvalError` и формат trace-событий не
   меняются.
 
-**Что изменено человеком:**
-- Issue будет создан вручную перед push, потому что GitHub connector в этой
-  сессии вернул 404 для classroom-репозитория.
-
 **Связанные файлы:**
 - `src/Language/Evaluator.fs`
 - `tests/Language.Tests/EvaluatorTests.fs`
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
-**Связанный Issue:** #60
-**Связанный PR:** pending
+**Связанный PR:** #61
 
 ---
