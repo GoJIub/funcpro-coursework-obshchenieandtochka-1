@@ -12,6 +12,7 @@
 | [standard-library.md](standard-library.md) | встроенные функции и формы стандартной библиотеки |
 | [architecture.md](architecture.md) | архитектура реализации и основные модули |
 | [trace.md](trace.md) | режим трассировки вычислений |
+| [examples.md](examples.md) | примеры программ и сценарий демонстрации |
 | [ai-usage/](ai-usage/) | политика, индивидуальные логи и командные решения по AI usage |
 
 ## Что реализовано
