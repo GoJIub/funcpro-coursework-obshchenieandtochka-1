@@ -173,8 +173,11 @@ DOTNET_ROLL_FORWARD=Major dotnet test FuncProCoursework.sln --configuration Rele
 | Участник | Зона ответственности |
 |---|---|
 | Girday | semantic core: AST, values, environment, evaluator, closures, `letrec`, lazy core, quality fixes |
-| SergioMartinov31 | parser, syntax, pretty-printer, CLI, parser tests |
-| GoJlub | builtins, lists, higher-order functions, examples, trace, documentation |
+| SergioMartinov31 | parser, syntax, pretty-printer, CLI |
+| GoJlub | builtins, lists, higher-order functions, examples, documentation |
+
+Тесты писались всеми участниками в рамках своих зон: semantic core,
+parser/CLI, builtins и runnable examples.
 
 ## Использование ИИ
 
