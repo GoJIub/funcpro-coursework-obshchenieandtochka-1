@@ -12,6 +12,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -22,5 +25,13 @@ jobs:
       - name: Install MkDocs
         run: pip install mkdocs-material
 
-      - name: Deploy
-        run: mkdocs gh-deploy --force
+      - name: Build docs
+        run: mkdocs build --strict false
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
