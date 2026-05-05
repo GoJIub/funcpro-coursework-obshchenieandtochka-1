@@ -1,6 +1,7 @@
 # Syntax
 
-Язык использует S-expression синтаксис. Все составные формы записываются в скобках.
+Язык использует S-expression синтаксис. Все составные формы записываются в
+скобках. Файл `.x` должен содержать одно top-level выражение.
 
 ---
 
@@ -20,6 +21,8 @@
 true
 false
 ```
+
+Строковых literals в текущей версии языка нет.
 
 ---
 
@@ -42,7 +45,7 @@ my-var
 
 ```
 (if true 1 2)
-(if (= x 0) "zero" "nonzero")
+(if (= x 0) 100 200)
 ```
 
 ---
@@ -229,6 +232,29 @@ my-var
 (list true false true)
 ```
 
+Пустой список создаётся как `(list)`. Синтаксис `()` не является выражением и
+возвращает parse error.
+
+---
+
+## Maybe
+
+`Maybe` создаётся builtins `just` и `nothing` и обрабатывается через `fmap` /
+`bind`.
+
+```
+(just expr)
+(nothing)
+(fmap function maybe)
+(bind maybe function)
+```
+
+Пример:
+
+```
+(fmap (x => (* x 2)) (just 5))
+```
+
 ---
 
 ## Delay / Force
@@ -260,7 +286,8 @@ my-var
 | Лишняя закрывающая скобка | `Unexpected ')'` |
 | Лишние токены после выражения | `Unexpected tokens after expression` |
 | Неверное число аргументов у `if` | `Invalid if syntax` |
-| Неверное число аргументов у `and`/`or` | `Invalid and/or syntax` |
+| Неверное число аргументов у `and` | `Invalid and syntax` |
+| Неверное число аргументов у `or` | `Invalid or syntax` |
 | Неверное число аргументов у `let` | `Invalid let syntax` |
 | Неверный синтаксис `let*` | `Invalid let* syntax` / `Invalid let* binding syntax` |
 | Неверное число аргументов у `letrec` | `Invalid letrec syntax` |
@@ -268,5 +295,12 @@ my-var
 | Неверное число аргументов у `lambda` | `Invalid lambda syntax` |
 | Неверный параметр lambda (число или bool) | `Invalid parameter name` |
 | Неверный синтаксис `=>` | `Invalid lambda sugar syntax` |
-| Неверное число аргументов у `delay`/`force` | `Invalid delay/force syntax` |
+| Неверное число аргументов у `delay` | `Invalid delay syntax` |
+| Неверное число аргументов у `force` | `Invalid force syntax` |
 | Пустой список `()` | `Empty list` |
+
+## Ограничения синтаксиса
+
+- Комментарии не поддерживаются.
+- Строки не поддерживаются.
+- Несколько top-level выражений в одном файле не поддерживаются.
