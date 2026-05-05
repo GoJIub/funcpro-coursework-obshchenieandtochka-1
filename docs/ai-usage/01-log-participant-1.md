@@ -578,3 +578,51 @@
 **Связанный PR:** #72
 
 ---
+
+**Дата:** 06.05.2026
+**Задача:** Issue #69 — финализировать AI usage summary
+
+**Prompt / темы обращений:**
+Сессия с Codex после approval PR #72:
+1. Перейти на `main`, выполнить `git pull` после merge PR #72.
+2. Удалить локальную ветку `docs/finalize-reference`.
+3. Начать Issue #69 по финальному summary использования генеративного ИИ.
+4. Проанализировать `docs/ai-usage/00-policy.md`,
+   `01-log-participant-1.md`, `01-log-participant-2.md`,
+   `01-log-participant-3.md` и `02-team-decisions.md`.
+5. Добавить `docs/ai-usage/04-final-summary.md`.
+6. Обновить ссылки на AI usage documentation в README и `docs/index.md`.
+
+**Ответ ИИ / краткое содержание:**
+- Создан `docs/ai-usage/04-final-summary.md`.
+- Summary перечисляет использованные AI-инструменты: OpenAI Codex, ChatGPT и
+  Claude.
+- Summary описывает, для каких задач использовался ИИ: planning, issue/PR
+  drafting, explanations, documentation drafts, test cases, PR review и
+  финальная проверка docs.
+- Summary связывает вклад по зонам Участников 1, 2 и 3 с индивидуальными
+  логами.
+- Summary отдельно фиксирует командные решения из
+  `docs/ai-usage/02-team-decisions.md`.
+- Summary явно указывает, что AI-generated code и documentation changes
+  проходили human review, pull requests, tests и CI.
+- README и `docs/index.md` обновлены ссылкой на финальное summary.
+
+**Что принято:**
+- Финальное summary не заменяет индивидуальные логи, а связывает их как
+  короткая входная точка для преподавателя.
+- Не утверждать, что ИИ был автором проекта; описывать его как engineering
+  assistant.
+- Явно указать ограничения AI-помощи и факт человеческой проверки.
+- После review feedback убрать GitHub Copilot из списка использованных
+  инструментов, так как команда не фиксировала его использование.
+
+**Связанные файлы:**
+- `docs/ai-usage/04-final-summary.md`
+- `docs/ai-usage/01-log-participant-1.md`
+- `README.md`
+- `docs/index.md`
+
+**Связанный PR:** #74
+
+---

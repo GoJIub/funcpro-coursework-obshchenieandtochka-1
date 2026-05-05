@@ -192,4 +192,5 @@ parser/CLI, builtins и runnable examples.
 - [docs/ai-usage/01-log-participant-1.md](docs/ai-usage/01-log-participant-1.md);
 - [docs/ai-usage/01-log-participant-2.md](docs/ai-usage/01-log-participant-2.md);
 - [docs/ai-usage/01-log-participant-3.md](docs/ai-usage/01-log-participant-3.md);
-- [docs/ai-usage/02-team-decisions.md](docs/ai-usage/02-team-decisions.md).
+- [docs/ai-usage/02-team-decisions.md](docs/ai-usage/02-team-decisions.md);
+- [docs/ai-usage/04-final-summary.md](docs/ai-usage/04-final-summary.md).
