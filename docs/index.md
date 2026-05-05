@@ -95,7 +95,8 @@ GitHub Pages недоступен в classroom repository. Markdown-докуме
 - [ai-usage/01-log-participant-1.md](ai-usage/01-log-participant-1.md);
 - [ai-usage/01-log-participant-2.md](ai-usage/01-log-participant-2.md);
 - [ai-usage/01-log-participant-3.md](ai-usage/01-log-participant-3.md);
-- [ai-usage/02-team-decisions.md](ai-usage/02-team-decisions.md).
+- [ai-usage/02-team-decisions.md](ai-usage/02-team-decisions.md);
+- [ai-usage/04-final-summary.md](ai-usage/04-final-summary.md).
 
-Финальное summary будет добавлено в `docs/ai-usage/04-final-summary.md` в
-рамках отдельной задачи.
+Итоговое summary связывает индивидуальные логи, командные решения и процесс
+human review AI-assisted изменений.
