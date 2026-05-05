@@ -16,6 +16,7 @@ nav:
       - Лог участника 2: ai-usage/01-log-participant-2.md
       - Лог участника 3: ai-usage/01-log-participant-3.md
       - Командные решения: ai-usage/02-team-decisions.md
+      - Итоговый отчёт: ai-usage/04-final-summary.md
 
 theme:
   name: material
