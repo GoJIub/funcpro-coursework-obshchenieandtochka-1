@@ -527,3 +527,52 @@
 **Связанный PR:** #71
 
 ---
+
+**Дата:** 06.05.2026
+**Задача:** Issue #67 — финализировать архитектурную документацию и справочник языка
+
+**Prompt / темы обращений:**
+Сессия с Codex по следующему documentation issue после merge PR #71:
+1. Переключиться на актуальный `main`, сделать `git pull` и создать ветку
+   `docs/finalize-reference`.
+2. Удалить локальную ветку `docs/readme-index` после merge PR #71.
+3. Проверить, не закрыты ли части Issue #67 предыдущими документационными
+   правками.
+4. Сверить `docs/architecture.md`, `docs/language-spec.md`,
+   `docs/syntax.md`, `docs/standard-library.md` и `docs/trace.md` с текущей
+   реализацией в `src/Language` и `src/Cli`.
+5. Убрать устаревшие формулировки про skeleton/заглушки и зафиксировать
+   ограничения языка.
+
+**Ответ ИИ / краткое содержание:**
+- `docs/architecture.md` переписан как описание текущего pipeline:
+  source -> parser -> AST -> evaluator -> value/error.
+- В architecture docs описаны основные модули `src/Language`, CLI, builtins,
+  trace hooks, tests и ограничения текущей реализации.
+- `docs/language-spec.md` переписан как актуальная спецификация LispNT:
+  syntax, AST, runtime values, parser sugar, evaluator semantics, `Maybe`,
+  explicit laziness, logical forms и errors.
+- `docs/syntax.md` уточнён: строковых literals и комментариев нет,
+  `and`/`or` бинарные, parse error messages соответствуют parser-у.
+- `docs/standard-library.md` приведён к фактическому output format
+  pretty-printer-а (`[1; 2]`, `Just ...`, `Nothing`) и больше не содержит
+  `;`-комментариев внутри runnable code blocks.
+- `docs/trace.md` уточнён по фактической цветовой схеме trace.
+
+**Что принято:**
+- `Maybe` не только упоминается в README/index, но и явно описывается в
+  language spec и standard library.
+- Документация фиксирует отсутствие strings, comments и IO builtins, чтобы не
+  обещать неподдерживаемые возможности.
+- Несмёрженную локальную ветку `backup/core-project-skeleton-full` не удалять
+  без отдельного подтверждения, потому что она не входит в `git branch --merged`.
+
+**Связанные файлы:**
+- `docs/architecture.md`
+- `docs/language-spec.md`
+- `docs/syntax.md`
+- `docs/standard-library.md`
+- `docs/trace.md`
+- `docs/ai-usage/01-log-participant-1.md`
+
+---
