@@ -477,6 +477,8 @@
 - `docs/language-spec.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
+**Связанный PR:** #65
+
 ---
 
 **Дата:** 05.05.2026
@@ -513,5 +515,7 @@
 - `README.md`
 - `docs/index.md`
 - `docs/ai-usage/01-log-participant-1.md`
+
+**Связанный PR:** #71
 
 ---
