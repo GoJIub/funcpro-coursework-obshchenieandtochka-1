@@ -1,8 +1,8 @@
 # Примеры программ
 
-Все примеры находятся в папке [`examples/`](../examples) и запускаются через CLI.
-Синтаксис языка описан в [`docs/syntax.md`](syntax.md),
-встроенные функции — в [`docs/standard-library.md`](standard-library.md).
+Все примеры находятся в папке [`examples/`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples) и запускаются через CLI.
+Синтаксис языка описан в [`docs/syntax.md`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/docs/syntax.md),
+встроенные функции — в [`docs/standard-library.md`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/docs/standard-library.md).
 
 Базовая команда запуска:
 
@@ -19,7 +19,7 @@ dotnet run --project src/Cli -- examples/<файл>.x
 
 ## factorial
 
-**Файл:** [`examples/factorial.x`](../examples/factorial.x)
+**Файл:** [`examples/factorial.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/factorial.x)
 
 Рекурсивное вычисление факториала через `letrec`. Имя `fact` видно внутри
 своего тела, что позволяет функции вызывать саму себя.
@@ -46,7 +46,7 @@ dotnet run --project src/Cli -- examples/factorial.x --trace
 
 ## fibonacci
 
-**Файл:** [`examples/fibonacci.x`](../examples/fibonacci.x)
+**Файл:** [`examples/fibonacci.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/fibonacci.x)
 
 Число Фибоначчи через двойную рекурсию. Каждый вызов ветвится на два
 рекурсивных вызова с уменьшенными аргументами.
@@ -74,7 +74,7 @@ dotnet run --project src/Cli -- examples/fibonacci.x
 
 ## closure
 
-**Файл:** [`examples/closure.x`](../examples/closure.x)
+**Файл:** [`examples/closure.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/closure.x)
 
 Функция `make-adder` возвращает другую функцию, которая захватывает параметр
 `x` из внешнего окружения. При вызове `(make-adder 10)` возвращается замыкание,
@@ -100,7 +100,7 @@ dotnet run --project src/Cli -- examples/closure.x --ast
 
 ## sum-list
 
-**Файл:** [`examples/sum-list.x`](../examples/sum-list.x)
+**Файл:** [`examples/sum-list.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/sum-list.x)
 
 Сумма элементов списка через `fold` с начальным накопителем `0` и функцией `+`.
 
@@ -120,7 +120,7 @@ dotnet run --project src/Cli -- examples/sum-list.x
 
 ## map
 
-**Файл:** [`examples/map.x`](../examples/map.x)
+**Файл:** [`examples/map.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/map.x)
 
 Применение функции возведения в квадрат к каждому элементу списка. Lambda
 передаётся как значение первого класса.
@@ -141,7 +141,7 @@ dotnet run --project src/Cli -- examples/map.x
 
 ## filter
 
-**Файл:** [`examples/filter.x`](../examples/filter.x)
+**Файл:** [`examples/filter.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/filter.x)
 
 Фильтрация списка по предикату: оставляются только элементы больше 2.
 
@@ -161,7 +161,7 @@ dotnet run --project src/Cli -- examples/filter.x
 
 ## fold
 
-**Файл:** [`examples/fold.x`](../examples/fold.x)
+**Файл:** [`examples/fold.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/fold.x)
 
 Произведение всех элементов списка через `fold` с начальным накопителем `1`
 и функцией `*`.
@@ -182,7 +182,7 @@ dotnet run --project src/Cli -- examples/fold.x
 
 ## maybe
 
-**Файл:** [`examples/maybe.x`](../examples/maybe.x)
+**Файл:** [`examples/maybe.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/maybe.x)
 
 Применение функции к значению, обёрнутому в `Maybe`, через `fmap`.
 Если значение `nothing`, функция не вызывается.
@@ -205,7 +205,7 @@ dotnet run --project src/Cli -- examples/maybe.x
 
 ## lazy
 
-**Файл:** [`examples/lazy.x`](../examples/lazy.x)
+**Файл:** [`examples/lazy.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/lazy.x)
 
 Базовый пример явной ленивости: выражение `(+ 1 2)` откладывается через
 `delay` и вычисляется только при вызове `force`.
@@ -227,7 +227,7 @@ dotnet run --project src/Cli -- examples/lazy.x
 
 ## lazy-memo
 
-**Файл:** [`examples/lazy-memo.x`](../examples/lazy-memo.x)
+**Файл:** [`examples/lazy-memo.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/lazy-memo.x)
 
 Демонстрация мемоизации: `force` вызывается дважды на одном thunk, но
 выражение `(+ 1 2)` вычисляется только один раз. Второй `force` возвращает
@@ -252,7 +252,7 @@ dotnet run --project src/Cli -- examples/lazy-memo.x
 
 ## lazy-scope
 
-**Файл:** [`examples/lazy-scope.x`](../examples/lazy-scope.x)
+**Файл:** [`examples/lazy-scope.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/lazy-scope.x)
 
 Thunk захватывает лексическое окружение в момент `delay`, а не в момент
 `force`. Переменная `x` повторно связывается со значением `99`, но `force`
@@ -277,7 +277,7 @@ dotnet run --project src/Cli -- examples/lazy-scope.x
 
 ## lazy-error
 
-**Файл:** [`examples/lazy-error.x`](../examples/lazy-error.x)
+**Файл:** [`examples/lazy-error.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/lazy-error.x)
 
 `delay` не вычисляет выражение — даже если оно содержит ошибку. `(/ 1 0)` не
 вычисляется, потому что нигде не вызывается `force`, и программа возвращает
@@ -300,7 +300,7 @@ dotnet run --project src/Cli -- examples/lazy-error.x
 
 ## arrow-lambda
 
-**Файл:** [`examples/arrow-lambda.x`](../examples/arrow-lambda.x)
+**Файл:** [`examples/arrow-lambda.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/arrow-lambda.x)
 
 Синтаксический сахар `=>` для лямбды с одним параметром. Два вложенных `=>`
 создают каррированную функцию — результат эквивалентен `closure.x`.
@@ -322,7 +322,7 @@ dotnet run --project src/Cli -- examples/arrow-lambda.x
 
 ## let-sugar
 
-**Файл:** [`examples/let-sugar.x`](../examples/let-sugar.x)
+**Файл:** [`examples/let-sugar.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/let-sugar.x)
 
 Синтаксический сахар `let x = value body` — знак `=` необязателен, оба
 варианта записи `let` эквивалентны.
@@ -345,7 +345,7 @@ dotnet run --project src/Cli -- examples/let-sugar.x
 
 ## let-star
 
-**Файл:** [`examples/let-star.x`](../examples/let-star.x)
+**Файл:** [`examples/let-star.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/let-star.x)
 
 `let*` позволяет использовать ранее связанные переменные в последующих
 привязках того же блока. Здесь `z` вычисляется через уже доступные `x` и `y`.
@@ -367,7 +367,7 @@ dotnet run --project src/Cli -- examples/let-star.x
 
 ## cond
 
-**Файл:** [`examples/cond.x`](../examples/cond.x)
+**Файл:** [`examples/cond.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/cond.x)
 
 Многоветочное условие через `cond`. Парсер разворачивает его в цепочку
 вложенных `if`. Последняя ветка `(true ...)` служит fallback.
@@ -392,7 +392,7 @@ dotnet run --project src/Cli -- examples/cond.x
 
 ## logical-forms
 
-**Файл:** [`examples/logical-forms.x`](../examples/logical-forms.x)
+**Файл:** [`examples/logical-forms.x`](https://github.com/GoJIub/funcpro-coursework-obshchenieandtochka-1/blob/main/examples/logical-forms.x)
 
 Short-circuit вычисление логических форм: `(and false ...)` не вычисляет
 правую часть, `(or true ...)` тоже. `not` инвертирует булево значение.
