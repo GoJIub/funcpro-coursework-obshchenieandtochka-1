@@ -575,4 +575,6 @@
 - `docs/trace.md`
 - `docs/ai-usage/01-log-participant-1.md`
 
+**Связанный PR:** #72
+
 ---
