@@ -130,6 +130,7 @@ dotnet run --project src/Cli -- --help
 - [docs/standard-library.md](docs/standard-library.md): стандартная библиотека;
 - [docs/architecture.md](docs/architecture.md): архитектура реализации;
 - [docs/trace.md](docs/trace.md): режим трассировки;
+- [docs/examples.md](docs/examples.md): примеры программ и сценарий демонстрации;
 - [docs/ai-usage](docs/ai-usage): раскрытие использования генеративного ИИ.
 
 GitHub Pages в classroom repository недоступен. Markdown-документация в `docs/`
