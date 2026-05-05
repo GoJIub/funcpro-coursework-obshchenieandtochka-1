@@ -1,7 +1,7 @@
-# Project Documentation
+# LispNT Documentation
 
 Эта папка содержит canonical markdown-документацию курсового проекта:
-небольшого Lisp-like функционального языка на F#.
+**LispNT** (Lisp&Tochka), небольшого Lisp-like функционального языка на F#.
 
 ## Быстрая навигация
 
@@ -33,6 +33,8 @@
 ## Запуск
 
 Из корня репозитория:
+
+Рекомендуемая среда: .NET SDK 10.x.
 
 ```bash
 dotnet run --project src/Cli -- examples/factorial.x

@@ -1,9 +1,10 @@
-# Lisp-like functional language on F#
+# LispNT
 
-Курсовой проект по функциональному программированию: небольшой строгий
-динамически типизированный функциональный язык с Lisp-like синтаксисом,
-интерпретатором, лексическими замыканиями, рекурсией, списками, функциями
-высшего порядка, `Maybe`, явной ленивостью и трассировщиком вычислений.
+Курсовой проект по функциональному программированию: **LispNT** (Lisp&Tochka),
+небольшой строгий динамически типизированный функциональный язык с Lisp-like
+синтаксисом, интерпретатором, лексическими замыканиями, рекурсией, списками,
+функциями высшего порядка, `Maybe`, явной ленивостью и трассировщиком
+вычислений.
 
 Исходные программы пишутся в `.x` файлах и запускаются через CLI:
 
@@ -35,7 +36,7 @@ source .x -> parser -> AST -> evaluator -> value / error
 
 ## Quick Start
 
-Требуется .NET SDK 8.x.
+Требуется .NET SDK 10.x.
 
 ```bash
 dotnet restore FuncProCoursework.sln
@@ -43,8 +44,8 @@ dotnet build FuncProCoursework.sln --configuration Release
 dotnet test FuncProCoursework.sln --configuration Release
 ```
 
-Если локально установлен только более новый .NET runtime, можно запускать тесты
-с roll-forward:
+Проекты сейчас таргетируют `net8.0`, поэтому при запуске на более новом runtime
+можно использовать roll-forward:
 
 ```bash
 DOTNET_ROLL_FORWARD=Major dotnet test FuncProCoursework.sln --configuration Release
