@@ -595,8 +595,8 @@
 
 **Ответ ИИ / краткое содержание:**
 - Создан `docs/ai-usage/04-final-summary.md`.
-- Summary перечисляет использованные AI-инструменты: OpenAI Codex, ChatGPT,
-  Claude и GitHub Copilot при наличии доступа.
+- Summary перечисляет использованные AI-инструменты: OpenAI Codex, ChatGPT и
+  Claude.
 - Summary описывает, для каких задач использовался ИИ: planning, issue/PR
   drafting, explanations, documentation drafts, test cases, PR review и
   финальная проверка docs.
@@ -614,11 +614,15 @@
 - Не утверждать, что ИИ был автором проекта; описывать его как engineering
   assistant.
 - Явно указать ограничения AI-помощи и факт человеческой проверки.
+- После review feedback убрать GitHub Copilot из списка использованных
+  инструментов, так как команда не фиксировала его использование.
 
 **Связанные файлы:**
 - `docs/ai-usage/04-final-summary.md`
 - `docs/ai-usage/01-log-participant-1.md`
 - `README.md`
 - `docs/index.md`
+
+**Связанный PR:** #74
 
 ---
