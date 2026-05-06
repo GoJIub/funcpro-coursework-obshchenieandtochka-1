@@ -84,9 +84,12 @@ DOTNET_ROLL_FORWARD=Major dotnet test FuncProCoursework.sln --configuration Rele
 
 ## GitHub Pages
 
-GitHub Pages недоступен в classroom repository. Markdown-документация в этой
-папке остаётся canonical-версией. Если документация будет опубликована как
-внешняя HTML-страница, ссылка будет добавлена в README и сюда.
+GitHub Pages в classroom repository недоступен, поэтому HTML-версия документации
+опубликована отдельно:
+
+- [LispNT Documentation](https://gojiub.github.io/funcpro-coursework-obshchenieandtochka-1/)
+
+Markdown-документация в `docs/` остаётся canonical-версией.
 
 ## AI Usage
 
