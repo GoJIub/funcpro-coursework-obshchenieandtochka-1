@@ -133,8 +133,12 @@ dotnet run --project src/Cli -- --help
 - [docs/examples.md](docs/examples.md): примеры программ и сценарий демонстрации;
 - [docs/ai-usage](docs/ai-usage): раскрытие использования генеративного ИИ.
 
-GitHub Pages в classroom repository недоступен. Markdown-документация в `docs/`
-является canonical-версией; внешняя HTML-публикация будет указана отдельно.
+GitHub Pages в classroom repository недоступен, поэтому HTML-версия документации
+опубликована отдельно:
+
+- [LispNT Documentation](https://gojiub.github.io/funcpro-coursework-obshchenieandtochka-1/)
+
+Markdown-документация в `docs/` остаётся canonical-версией.
 
 ## Структура проекта
 
